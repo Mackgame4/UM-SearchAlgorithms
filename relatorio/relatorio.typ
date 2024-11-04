@@ -27,7 +27,7 @@ Nessas situações, é essencial um sistema de distribuição eficiente que aten
 Os veículos disponíveis (drones, helicópteros, barcos, caminhões, etc.) possuem limitações específicas, como a capacidade de carga e autonomia, que podem ser impactadas por fatores ambientais.
 Para maximizar a efetividade da distribuição, é necessário escolher o veículo adequado para cada rota e garantir que os suprimentos cheguem dentro do tempo crítico, isto é, a escolha ótima da rota a tomar considerando o consumo de combustível.
 
-O objetivo central é garantir que o maior número de pessoas seja assistido dentro de um período limitado, evitando desperdícios de tempo, alimentos e combustível. Enfrentando obstáculos fixos e dinâmicos, como acessos bloqueados e condições climáticas extremas.
+O objetivo central é garantir que o maior número de pessoas seja assistido dentro de um tempo limitado, evitando desperdícios de tempo, alimentos e combustível. Enfrentando obstáculos fixos e dinâmicos, como acessos bloqueados e condições climáticas extremas.
 
 = Formulação do problema
 #v(15pt)
