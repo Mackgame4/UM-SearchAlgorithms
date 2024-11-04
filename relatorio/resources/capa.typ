@@ -21,11 +21,12 @@
     smallcaps(align(center, text(font: meta.globals.font, 1.38em, weight: 500, subtitle)))
 
     v(5mm)
-    align(center, text(font: meta.globals.font, 1.2em, weight: 500, theme))
+    align(center, text(font: meta.globals.font, 1.3em, weight: 500, theme))
 
     v(15mm)
     align(center, text(0.8em, weight: 100, department))
-    align(center, text(0.8em, weight: 100, degree + " " + semester))
+    v(0.5mm)
+    align(center, text(0.8em, weight: 100, degree + h(1mm) + semester))
 
     v(15mm)
     align(center, text(0.8em, weight: 100, "Equipa de Trabalho:") + v(1mm) + text(1.1em, weight: 100, (
