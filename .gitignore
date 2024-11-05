@@ -123,3 +123,7 @@ Thumbs.db
 
 # Relatorio
 relatorio/*.pdf
+
+# Cache files
+*.cache
+cache/*

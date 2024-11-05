@@ -1,7 +1,7 @@
 all: dev
 
 dev:
-	@python src/main.py
+	@python src/main.py $(args)
 
 relatorio: relatorio_build
 

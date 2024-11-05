@@ -31,10 +31,10 @@ O objetivo central é garantir que o maior número de pessoas seja assistido den
 
 = Formulação do problema
 #v(15pt)
-- Estado Inicial: Alimentos e medicamentos disponíveis e veiculos prontos para distribuição.
-- Objetivo: Maximizar a assistência às áreas prioritárias dentro do tempo limitado.
-- Ações: Escolha de veículo e rota.
-- Custo: Baseado no consumo de combustível e tempo de cada rota.
+- *Estado Inicial:* Alimentos e medicamentos disponíveis e veiculos prontos para distribuição.
+- *Objetivo:* Maximizar a assistência às áreas prioritárias dentro do tempo limitado.
+- *Ações:* Escolha de veículo e rota.
+- *Custo:* Baseado no consumo de combustível e tempo de cada rota.
 
 Essa formulação permite aplicar e avaliar algoritmos de procura, comparando a eficiência das soluções.
 
