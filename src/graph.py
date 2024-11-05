@@ -37,6 +37,9 @@ class Graph:
     def get_nodes(self):
         return self.nodes
     
+    def add_node(self, node):
+        self.nodes.append(node)
+    
     def get_graph(self):
         return self.graph
     
@@ -48,6 +51,9 @@ class Graph:
     
     def set_zones(self, zones):
         self.zones = zones
+
+    def add_zone(self, zone):
+        self.zones[zone.get_name()] = zone
     
     def set_camp(self, camp):
         self.camp = camp
@@ -77,7 +83,7 @@ class Graph:
         plt.title("Map of Southern Africa")
         plt.show()
 
-    # draw map using OSMnx
+    # draw map
     def draw_map(self):
         world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
         places = [node.get_name() for node in self.nodes]

@@ -11,12 +11,15 @@ def main():
         print(Fore.RED + "Invalid arguments. Select the type of graph you want to use:" + Fore.RESET)
         print(Fore.YELLOW + "1 - " + Fore.RESET + "Grafo Fixo")
         print(Fore.YELLOW + "2 - " + Fore.RESET + "Grafo Dinâmico")
+        print(Fore.YELLOW + "3 - " + Fore.RESET + "Grafo IRL")
         print(Fore.YELLOW + "0 - " + Fore.RESET + "Sair")
         option = int(input(Fore.YELLOW + "Escolha uma opcao: " + Fore.RESET))
         if option == 1:
             args.append("test")
         elif option == 2:
-            args.append("run")
+            args.append("run_dynamic")
+        elif option == 3:
+            args.append("run_irl")
         else:
             exit()
         print("\033c") # clean the console

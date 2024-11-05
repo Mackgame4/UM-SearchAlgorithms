@@ -7,10 +7,10 @@ class Vehicle:
         self.tipos = {
             0: "Drone",
             1: "Helicoptero",
-            2: "Barco",
-            3: "Caminhao",
-            4: "Carro",
-            5: "Moto"
+            2: "Caminhao",
+            3: "Carro",
+            4: "Moto",
+            #5: "Barco"
         }
         self.tipo = self.tipos[tipo]
     
