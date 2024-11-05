@@ -1,8 +1,8 @@
 from zone import Zone
 from graph import Graph
+from vehicle import Vehicle
 import random
 import geopandas as gpd
-from vehicle import Vehicle
 
 # DynamicGraph extends graph and creates a random graph with random zones and edges
 class DynamicGraph(Graph):
@@ -28,11 +28,10 @@ class DynamicGraph(Graph):
         self.zones = {}
         for index, row in continent.iterrows():
             zone_ttl = random.randint(*self.zone_ttl_limits) # Random TTL
-            # From all the vehicle types, randomly choose n zone_max_vehicles to be permitted in the zone
             veh = Vehicle()
-            veh_types = veh.get_tipos()
+            veh_types = veh.get_tipos() # Get vehicle types
             zone_vehicles = set(random.choices(list(veh_types.values()), k=random.randint(1, self.zone_max_vehicles)))
-            self.zones[index] = Zone(row['name'], row['pop_est'], 0, zone_ttl, zone_vehicles) # Just add the zone, no severity
+            self.zones[index] = Zone(str(row['name']), int(row['pop_est']), 0, zone_ttl, zone_vehicles) # Just add the zone, no severity
         
         # Randomly choose one country as the camp
         self.set_camp(random.choice(list(self.zones.values())))
