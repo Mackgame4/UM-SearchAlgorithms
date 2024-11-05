@@ -1,5 +1,5 @@
 class Vehicle:
-    def __init__(self, carga_max=0, velocidade=0, autonomia=0, tipo=3):
+    def __init__(self, tipo=3, carga_max=0, velocidade=0, autonomia=0):
         self.carga_max = carga_max # capacidade de carga
         self.carga_atual = 0
         self.velocidade = velocidade # tempos de viagem
@@ -10,18 +10,21 @@ class Vehicle:
             2: "Caminhao",
             3: "Carro",
             4: "Moto",
-            #5: "Barco"
+            5: "Barco"
         }
-        self.tipo = self.tipos[tipo]
+        self.tipo = tipo
     
     def __str__(self):
-        return f"Veiculo: {self.tipos[self.tipo]}"
+        return f"{self.tipos[self.tipo]}"
     
     def __repr__(self):
-        return f"Veiculo: {self.tipos[self.tipo]}"
+        return f"{self.tipos[self.tipo]}"
     
     def __eq__(self, other):
         return self.tipo == other.tipo
+    
+    def __hash__(self):
+        return hash(self.tipo)
     
     def get_tipo(self):
         return self.tipo
@@ -51,4 +54,7 @@ class Vehicle:
         self.autonomia = autonomia
 
     def set_tipo(self, tipo):
-        self.tipo = self.tipos[tipo]
+        self.tipo = tipo
+
+    def get_tipos(self):
+        return self.tipos

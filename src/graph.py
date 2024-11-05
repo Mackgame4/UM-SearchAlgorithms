@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from node import Node
 import geopandas as gpd
 from zone import Zone
+from shapely.geometry import Point
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning) # hide UserWarning messages from geopandas
@@ -80,7 +81,7 @@ class Graph:
                 for u, v, d in g.edges(data=True)}
         nx.draw_networkx_edge_labels(g, pos, edge_labels=labels)
 
-        plt.title("Map of Southern Africa")
+        plt.title("Graph of Zones")
         plt.show()
 
     # draw map
@@ -90,7 +91,7 @@ class Graph:
         selected_countries = world[world['name'].isin(places)]
 
         # Plotting the boundaries
-        _, ax = plt.subplots(figsize=(12, 12))
+        fig, ax = plt.subplots(figsize=(12, 12))
         selected_countries.boundary.plot(ax=ax, color='lightgrey')
 
         # From the selected countries, paint the most affected zone in red (the higher value of severity the more dark red it is)
@@ -126,9 +127,33 @@ class Graph:
                 ax.text((node_centroid_x + adjacente_centroid_x) / 2, 
                         ((node_centroid_y + adjacente_centroid_y) / 2) + 0.5, # Add a offset to the y coordinate so the text doesn't overlap the line 
                         str(fuel_cost), fontsize=12, color='black', fontweight='bold')
+                
+        # On hover a zone show the population and severity
+        def on_plot_hover(event):
+            if event.xdata is None or event.ydata is None:
+                return
+            for zone in self.zones:
+                zone_name = self.zones[zone].get_name()
+                zone_severity = self.zones[zone].get_severity()
+                zone_population = self.zones[zone].get_population()
+                zone_country = world[world['name'] == zone_name]
+                zone_ttl = self.zones[zone].get_ttl()
+                zone_permitted_vehicles = self.zones[zone].get_permitted_vehicles()
+                permitted_vehicles_list = ', '.join([str(vehicle) for vehicle in zone_permitted_vehicles])
+                if not zone_country.empty:
+                    geometry = zone_country.geometry.iloc[0]  # Get the first geometry (assumes unique names)
+                    if geometry.contains(Point(event.xdata, event.ydata)):
+                        ax.set_title(f"Zone: {zone_name}\nPopulation: {zone_population}\nSeverity: {zone_severity}\nTTL: {zone_ttl}\nPermitted vehicles: [{permitted_vehicles_list}]")
+                        fig.canvas.draw_idle()
+                        break
+                    else:
+                        ax.set_title("Map of Zones")
+                        fig.canvas.draw_idle()
+
+        fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)
         
-        ax.set_title("Map of Southern Africa")
-        #plt.axis('equal') # Maintain aspect ratio
+        plt.title("Map of Zones")
+        plt.axis('equal')
         ax.set_aspect('auto')
 
         # add legend

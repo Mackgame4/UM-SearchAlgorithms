@@ -2,6 +2,7 @@ from zone import Zone
 from graph import Graph
 import random
 import geopandas as gpd
+from vehicle import Vehicle
 
 # DynamicGraph extends graph and creates a random graph with random zones and edges
 class DynamicGraph(Graph):
@@ -10,6 +11,12 @@ class DynamicGraph(Graph):
         self.continent = continent
         self.max_edges_per_zone = max_edges_per_zone
         self.max_affected_zones = max_affected_zones
+        self.zone_severity_limits = (0, 4)
+        self.zone_travel_time_limits = (30, 200)
+        self.zone_fuel_cost_limits = (5, 10)
+        self.zone_good_conditions_weights = [0.85, 0.15] # 85% chance of good conditions
+        self.zone_ttl_limits = (80, 480)
+        self.zone_max_vehicles = 3
 
         self.example_graph()
 
@@ -20,7 +27,12 @@ class DynamicGraph(Graph):
         # Initialize zones with each country
         self.zones = {}
         for index, row in continent.iterrows():
-            self.zones[index] = Zone(row['name'], row['pop_est'], 0) # Just add the zone, no severity
+            zone_ttl = random.randint(*self.zone_ttl_limits) # Random TTL
+            # From all the vehicle types, randomly choose n zone_max_vehicles to be permitted in the zone
+            veh = Vehicle()
+            veh_types = veh.get_tipos()
+            zone_vehicles = set(random.choices(list(veh_types.values()), k=random.randint(1, self.zone_max_vehicles)))
+            self.zones[index] = Zone(row['name'], row['pop_est'], 0, zone_ttl, zone_vehicles) # Just add the zone, no severity
         
         # Randomly choose one country as the camp
         self.set_camp(random.choice(list(self.zones.values())))
@@ -28,7 +40,7 @@ class DynamicGraph(Graph):
         # Randomly choose neighbors contries to be affected (where the disaster occured)
         affected_zones = random.sample(list(self.zones.values()), self.max_affected_zones)
         for zone in affected_zones:
-            zone.set_severity(random.randint(1, 4)) # Random severity level
+            zone.set_severity(random.randint(*self.zone_severity_limits)) # Random severity level
 
         # Randomly add edges between countries
         zone_keys = list(self.zones.keys()) # Get zone keys
@@ -44,8 +56,8 @@ class DynamicGraph(Graph):
                 
                 # Randomly decide whether to add an edge
                 if random.random() < 0.15: # 15% chance of connecting any two zones
-                    travel_time = random.randint(30, 200)
-                    fuel_cost = random.randint(5, 20)
-                    good_conditions = random.choices([True, False], weights=[0.85, 0.15], k=1)[0] # Having good conditions is more likely
+                    travel_time = random.randint(*self.zone_travel_time_limits)
+                    fuel_cost = random.randint(*self.zone_fuel_cost_limits)
+                    good_conditions = random.choices([True, False], weights=self.zone_good_conditions_weights, k=1)[0] # Having good conditions is more likely
                     self.add_edge(zone1, zone2, travel_time, fuel_cost, good_conditions)
                     neighbors_added += 1

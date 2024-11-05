@@ -1,5 +1,6 @@
 from zone import Zone
 from graph import Graph
+from vehicle import Vehicle
 
 # FixedGraph extends graph and creates a fixed graph with fixed zones and edges (defined manually)
 class FixedGraph(Graph): # Inherit from Graph
@@ -10,7 +11,7 @@ class FixedGraph(Graph): # Inherit from Graph
     def example_graph(self):
         # Create nodes
         self.zones = {
-            0: Zone("Botswana", 100, 2), # Most affected zone
+            0: Zone("Botswana", 100, 2, 100, {Vehicle(3), Vehicle(2)}), # Most affected zone
             1: Zone("Namibia", 400, 1), # Affected zone
             2: Zone("Zimbabwe", 300, 0),
             3: Zone("Angola", 400, 0),
