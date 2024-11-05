@@ -1,12 +1,12 @@
 import sys
 from colorama import Fore
 from dynamic_graph import DynamicGraph
-from graph import FixedGraph
+from fixed_graph import FixedGraph
+from irl_graph import IRLGraph
 
 def main():
     args = sys.argv
-    dynamic_graph = None
-    fixed_graph = None
+    graph = None
     if len(args) < 2:
         print(Fore.RED + "Invalid arguments. Select the type of graph you want to use:" + Fore.RESET)
         print(Fore.YELLOW + "1 - " + Fore.RESET + "Grafo Fixo")
@@ -22,14 +22,16 @@ def main():
         print("\033c") # clean the console
         main() # re-run the program with the new argument
     elif args[1] == "test": # "make args='test'"
-        print(Fore.GREEN + "DEBUG: Running with fixed graph" + Fore.RESET)
-        fixed_graph = FixedGraph()
-    elif args[1] == "run": # "make args='run'"
+        print(Fore.GREEN + "DEBUG: Running with fixed test graph" + Fore.RESET)
+        graph = FixedGraph()
+    elif args[1] == "run_dynamic": # "make args='run_dynamic'"
         print(Fore.GREEN + "DEBUG: Running with dynamic graph" + Fore.RESET)
-        endereco = "Freguesia da Misericordia, Lisbon, Portugal"
-        dynamic_graph = DynamicGraph(endereco)
+        graph = DynamicGraph()
+    elif args[1] == "run_irl": # "make args='run_irl'"
+        print(Fore.GREEN + "DEBUG: Running with IRL graph" + Fore.RESET)
+        graph = IRLGraph()
     else:
-        print(Fore.RED + "Invalid arguments. Usage: python main.py [test|run]" + Fore.RESET)
+        print(Fore.RED + "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]" + Fore.RESET)
         exit()
 
     # Run the program
@@ -42,19 +44,21 @@ def main():
         print(Fore.YELLOW + "5 - " + Fore.RESET + "Resolver com BFS")
         print(Fore.YELLOW + "0 - " + Fore.RESET + "Sair")
 
+        if not graph:
+            print(Fore.RED + "Graph is not initialized." + Fore.RESET)
+            exit()
+
         option = int(input(Fore.YELLOW + "Escolha uma opcao: " + Fore.RESET))
         if option == 0:
             exit()
         elif option == 1:
-            if dynamic_graph: print(dynamic_graph.graph)
-            if fixed_graph: print(fixed_graph.graph)
+            print(graph.graph)
             input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
         elif option == 2:
-            if dynamic_graph: dynamic_graph.desenha_freguesia()
-            if fixed_graph: fixed_graph.draw_graph()
+            graph.draw_graph()
             input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
         elif option == 3:
-            if fixed_graph: fixed_graph.draw_map()
+            graph.draw_map()
             input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
         elif option == 4:
             print("Resolver com DFS")
@@ -64,7 +68,6 @@ def main():
             input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
         else:
             print(Fore.RED + "Opcao invalida." + Fore.RESET)
-            input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
 
 def exit():
     print(Fore.RED + "Exiting..." + Fore.RESET)

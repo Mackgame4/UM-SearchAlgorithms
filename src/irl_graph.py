@@ -8,7 +8,9 @@ from graph import Graph
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-class DynamicGraph(Graph):
+# TODO: Implement the IRLGraph class
+# attention, in this class we would need to change the "draw_map" method to use the osmnx library
+class IRLGraph(Graph):
     def __init__(self):
         super().__init__()
         self.address = "Piedmont, California, USA"
