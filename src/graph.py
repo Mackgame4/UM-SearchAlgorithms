@@ -59,6 +59,26 @@ class Graph:
     def set_camp(self, camp):
         self.camp = camp
 
+    # TODO: check if needed?
+    # functions to simplify calculations (get all graph data)
+    def get_edges_data(self):
+        edges = []
+        for node in self.nodes:
+            node_name = node.get_name()
+            for (adjacente, (travel_time, fuel_cost, good_conditions)) in self.graph[node_name]:
+                # Roads/edges have (travel_time, fuel_cost, good_conditions)
+                edges.append((node_name, adjacente, travel_time, fuel_cost, good_conditions))
+        return edges
+    
+    def get_nodes_data(self):
+        nodes = []
+        for node in self.nodes:
+            node_name = node.get_name()
+            # Zones/nodes have (name, population, severity, ttl, permitted_vehicles)
+            # Vehicles are stored as a dictionary and have (tipo, carga_max, carga_atual, velocidade, autonomia)
+            nodes.append((node_name, self.zones[node_name].get_population(), self.zones[node_name].get_severity(), self.zones[node_name].get_ttl(), self.zones[node_name].get_permitted_vehicles()))
+        return nodes
+
     # draw graph as a normal graph with nodes and edges
     def draw_graph(self):
         g = nx.Graph()

@@ -16,7 +16,7 @@ class DynamicGraph(Graph):
         self.zone_fuel_cost_limits = (5, 10)
         self.zone_good_conditions_weights = [0.85, 0.15] # 85% chance of good conditions
         self.zone_ttl_limits = (80, 480)
-        self.zone_max_vehicles = 3
+        self.zone_max_vehicles = 5
 
         self.example_graph()
 
@@ -30,7 +30,7 @@ class DynamicGraph(Graph):
             zone_ttl = random.randint(*self.zone_ttl_limits) # Random TTL
             veh = Vehicle()
             veh_types = veh.get_tipos() # Get vehicle types
-            zone_vehicles = set(random.choices(list(veh_types.values()), k=random.randint(1, self.zone_max_vehicles)))
+            zone_vehicles = set(random.choices(list(veh_types.values()), k=random.randint(2, self.zone_max_vehicles))) # At least 2 vehicles per zone
             self.zones[index] = Zone(str(row['name']), int(row['pop_est']), 0, zone_ttl, zone_vehicles) # Just add the zone, no severity
         
         # Randomly choose one country as the camp
