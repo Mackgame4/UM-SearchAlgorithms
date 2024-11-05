@@ -6,11 +6,11 @@ class Node:
         return self.name
     def __repr__(self):
         return self.name
-    def setId(self, id):
+    def set_id(self, id):
         self.id = id
-    def getId(self):
+    def get_id(self):
         return self.id
-    def getName(self):
+    def get_name(self):
         return self.name
     def __eq__(self, other):
         return self.name == other.name
