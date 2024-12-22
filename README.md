@@ -26,3 +26,4 @@ $ make relatorio
 
 ### Developement Team
 A104365 - Fábio Magalhães
+A104267 - André Pinto
