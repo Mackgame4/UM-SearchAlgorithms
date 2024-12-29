@@ -19,8 +19,8 @@ def notify(type, message):
     else:
         print(message)
 
-def notify_nt(type, message):
-    notify(type, f"{Back.WHITE}[NetTask]{Back.RESET} {message}")
+def clear():
+    print("\033c")  # clean the console
 
-def notify_af(type, message):
-    notify(type, f"{Back.WHITE}[AlertFlow]{Back.RESET} {message}")
+def press_key():
+    input(Back.WHITE + Fore.BLACK + "Prima [ENTER] para continuar" + Fore.RESET + Back.RESET)

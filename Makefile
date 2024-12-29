@@ -23,6 +23,9 @@ test:
 run-dynamic:
 	@make dev ARGS="run_dynamic"
 
+run:
+	@make dev ARGS="run_irl"
+
 clean:
 	@rm -rf __pycache__ src/__pycache__ src/*.pyc src/*/__pycache__ src/*/*.pyc
 

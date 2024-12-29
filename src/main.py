@@ -4,13 +4,13 @@ from dynamic_graph import DynamicGraph
 from fixed_graph import FixedGraph
 from irl_graph import IRLGraph
 from classes.vehicle import Vehicle
-
+from utils.notify import notify, clear, press_key
 
 def main():
     args = sys.argv
     graph = None
     if len(args) < 2:
-        print(Fore.RED + "Invalid arguments. Select the type of graph you want to use:" + Fore.RESET)
+        notify("error", "Invalid arguments. Select the type of graph you want to use:")
         print(Fore.YELLOW + "1 - " + Fore.RESET + "Grafo Fixo")
         print(Fore.YELLOW + "2 - " + Fore.RESET + "Grafo Dinâmico")
         print(Fore.YELLOW + "3 - " + Fore.RESET + "Grafo IRL")
@@ -24,19 +24,19 @@ def main():
             args.append("run_irl")
         else:
             exit_program()
-        print("\033c")  # clean the console
-        main()  # re-run the program with the new argument
-    elif args[1] == "test":  # "make args='test'"
-        print(Fore.GREEN + "DEBUG: Running with fixed test graph" + Fore.RESET)
+        clear()
+        main() # re-run the program with the new argument
+    elif args[1] == "test": # "make args='test'"
+        notify("info", "Running with fixed graph")
         graph = FixedGraph()
-    elif args[1] == "run_dynamic":  # "make args='run_dynamic'"
-        print(Fore.GREEN + "DEBUG: Running with dynamic graph" + Fore.RESET)
+    elif args[1] == "run_dynamic": # "make args='run_dynamic'"
+        notify("info", "Running with dynamic graph")
         graph = DynamicGraph()
-    elif args[1] == "run_irl":  # "make args='run_irl'"
-        print(Fore.GREEN + "DEBUG: Running with IRL graph" + Fore.RESET)
+    elif args[1] == "run_irl": # "make args='run_irl'"
+        notify("info", "Running with IRL graph")
         graph = IRLGraph()
     else:
-        print(Fore.RED + "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]" + Fore.RESET)
+        notify("warning", "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]")
         exit_program()
 
     # Run the program
@@ -50,7 +50,7 @@ def main():
         print(Fore.YELLOW + "0 - " + Fore.RESET + "Sair")
 
         if not graph:
-            print(Fore.RED + "Graph is not initialized." + Fore.RESET)
+            notify("error", "Graph not initialized.")
             exit_program()
 
         option = int(input(Fore.YELLOW + "Escolha uma opcao: " + Fore.RESET))
@@ -58,16 +58,16 @@ def main():
             exit_program()
         elif option == 1:
             print(graph.graph)
-            input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
+            press_key()
         elif option == 2:
             graph.draw_graph()
-            input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
+            press_key()
         elif option == 3:
             graph.draw_map()
-            input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
+            press_key()
         elif option == 4:
             print("Resolver com DFS")
-            input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
+            press_key()
         elif option == 5:
             start_node = input(Fore.YELLOW + "Digite o nome da zona inicial para BFS: " + Fore.RESET).strip()
             end_node = input(Fore.YELLOW + "Digite o nome da zona final para BFS: " + Fore.RESET).strip()
@@ -91,9 +91,9 @@ def main():
                     print(Fore.RED + f"Nenhum caminho válido encontrado de {start_node} para {end_node} com o veículo escolhido." + Fore.RESET)
                 else:
                     print(Fore.GREEN + f"Caminho encontrado com o veículo {veiculo_escolhido.get_tipo_name()}: {path} com custo total de {cost}" + Fore.RESET)
-            input("Prima" + Fore.YELLOW + " ENTER " + Fore.RESET + "para continuar")
+            press_key()
         else:
-            print(Fore.RED + "Opcao invalida." + Fore.RESET)
+            notify("error", "Opção inválida. Tente novamente.")
 
 def escolher_veiculo(carga):
     veiculos = [
@@ -111,7 +111,7 @@ def escolher_veiculo(carga):
     raise ValueError("Nenhum veículo disponível para transportar essa carga.")
 
 def exit_program():
-    print(Fore.RED + "Exiting..." + Fore.RESET)
+    notify("warning", "Exiting...")
     sys.exit()
 
 if __name__ == "__main__":
