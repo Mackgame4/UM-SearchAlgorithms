@@ -18,10 +18,10 @@ dev:
 	@python src/main.py $(ARGS)
 
 test:
-	make dev ARGS="test"
+	@make dev ARGS="test"
 
 run-dynamic:
-	make dev ARGS="run_dynamic"
+	@make dev ARGS="run_dynamic"
 
 clean:
 	@rm -rf __pycache__ src/__pycache__ src/*.pyc src/*/__pycache__ src/*/*.pyc

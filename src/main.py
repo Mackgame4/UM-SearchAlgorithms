@@ -3,7 +3,7 @@ from colorama import Fore
 from dynamic_graph import DynamicGraph
 from fixed_graph import FixedGraph
 from irl_graph import IRLGraph
-from vehicle import Vehicle
+from classes.vehicle import Vehicle
 
 
 def main():

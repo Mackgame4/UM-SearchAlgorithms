@@ -1,6 +1,6 @@
-from zone import Zone
-from graph import Graph
-from vehicle import Vehicle
+from classes.zone import Zone
+from classes.graph import Graph
+from classes.vehicle import Vehicle
 
 # FixedGraph extends graph and creates a fixed graph with fixed zones and edges (defined manually)
 class FixedGraph(Graph): # Inherit from Graph

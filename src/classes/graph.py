@@ -1,8 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from node import Node
+from classes.node import Node
 import geopandas as gpd
-from zone import Zone
+from classes.zone import Zone
 from collections import deque
 import warnings
 

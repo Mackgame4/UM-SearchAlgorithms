@@ -1,9 +1,9 @@
 import networkx as nx
 import osmnx as ox
 import matplotlib.pyplot as plt
-from node import Node
-from zone import Zone
-from graph import Graph
+from classes.node import Node
+from classes.zone import Zone
+from classes.graph import Graph
 
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)

@@ -5,7 +5,7 @@ This project was developed for the subject IA (Inteligencia Artificial/_Artifici
 To run this project you might need to install some of its dependencies:
 
 ```shell
-$ pip install colorama matplotlib osmnx geopandas networkx shapely
+$ make install
 ```
 
 ## How to run

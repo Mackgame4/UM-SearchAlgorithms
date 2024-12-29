@@ -1,6 +1,6 @@
-from zone import Zone
-from graph import Graph
-from vehicle import Vehicle
+from classes.zone import Zone
+from classes.graph import Graph
+from classes.vehicle import Vehicle
 import random
 import geopandas as gpd
 
