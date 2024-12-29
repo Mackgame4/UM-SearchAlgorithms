@@ -1,23 +1,40 @@
 all: dev
 
+install:
+	@pip install -r requirements.txt
+
+pre-install:
+#	@pip freeze > requirements.txt
+	@pip install pipreqs
+	@pipreqs --force .
+
+ARGS = $(filter-out $@,$(MAKECMDGOALS))
+
+# Prevent Make from treating arguments as targets
+%:
+	@:
+
 dev:
-	@python src/main.py $(args)
+	@python src/main.py $(ARGS)
 
 test:
-	@python src/main.py test
+	make dev ARGS="test"
 
-run_dynamic:
-	@python src/main.py run_dynamic
+run-dynamic:
+	make dev ARGS="run_dynamic"
 
-relatorio: relatorio_build
+clean:
+	@rm -rf __pycache__ src/__pycache__ src/*.pyc src/*/__pycache__ src/*/*.pyc
 
-relatorio_build:
+relatorio: relatorio-build
+
+relatorio-build:
 	@echo "Compilando relatorio..."
 	@typst compile relatorio/relatorio.typ
 
-relatorio_watch:
+relatorio-watch:
 	@echo "Assistindo alteracoes no relatorio..."
 	@typst watch relatorio/relatorio.typ
 
-relatorio_clean:
+relatorio-clean:
 	@rm -rf relatorio/relatorio.pdf
