@@ -4,29 +4,20 @@ from dynamic_graph import DynamicGraph
 from fixed_graph import FixedGraph
 from irl_graph import IRLGraph
 from classes.vehicle import Vehicle
-from utils.notify import notify, clear, press_key
+from utils.notify import notify
+from utils.menu import Menu
 
-def main():
-    args = sys.argv
+def run_main():
+    main_menu = Menu("Selecione o tipo de grafo que deseja utilizar:")
+    main_menu.add_entry("Fixed Graph", lambda: (run_menu(["", "test"]), main_menu.close()))
+    main_menu.add_entry("Dynamic Graph", lambda: (run_menu(["", "run_dynamic"]), main_menu.close()))
+    main_menu.add_entry("IRL Graph", lambda: (run_menu(["", "run_irl"]), main_menu.close()))
+    main_menu.default_exit(exit_program)
+    main_menu.show()
+
+def run_menu(args):
     graph = None
-    if len(args) < 2:
-        notify("error", "Invalid arguments. Select the type of graph you want to use:")
-        print(Fore.YELLOW + "1 - " + Fore.RESET + "Grafo Fixo")
-        print(Fore.YELLOW + "2 - " + Fore.RESET + "Grafo Dinâmico")
-        print(Fore.YELLOW + "3 - " + Fore.RESET + "Grafo IRL")
-        print(Fore.YELLOW + "0 - " + Fore.RESET + "Sair")
-        option = int(input(Fore.YELLOW + "Escolha uma opcao: " + Fore.RESET))
-        if option == 1:
-            args.append("test")
-        elif option == 2:
-            args.append("run_dynamic")
-        elif option == 3:
-            args.append("run_irl")
-        else:
-            exit_program()
-        clear()
-        main() # re-run the program with the new argument
-    elif args[1] == "test": # "make args='test'"
+    if args[1] == "test": # "make args='test'"
         notify("info", "Running with fixed graph")
         graph = FixedGraph()
     elif args[1] == "run_dynamic": # "make args='run_dynamic'"
@@ -37,63 +28,38 @@ def main():
         graph = IRLGraph()
     else:
         notify("warning", "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]")
-        exit_program()
+    graph_menu = Menu("Selecione uma opção:")
+    graph_menu.add_entry("Imprimir Grafo", lambda: print(graph.graph))
+    graph_menu.add_entry("Desenhar Grafo", lambda: graph.draw_graph())
+    graph_menu.add_entry("Desenhar Mapa", lambda: graph.draw_map())
+    graph_menu.add_entry("Resolver com DFS", lambda: print("Resolver com DFS"))
+    graph_menu.add_entry("Resolver com BFS", lambda: resolve_with_bfs(graph))
+    graph_menu.default_exit(exit_program)
+    graph_menu.show()
 
-    # Run the program
-    option = -1
-    while option != 0:
-        print(Fore.YELLOW + "1 - " + Fore.RESET + "Imprimir Grafo")
-        print(Fore.YELLOW + "2 - " + Fore.RESET + "Desenhar Grafo")
-        print(Fore.YELLOW + "3 - " + Fore.RESET + "Desenhar Mapa")
-        print(Fore.YELLOW + "4 - " + Fore.RESET + "Resolver com DFS")
-        print(Fore.YELLOW + "5 - " + Fore.RESET + "Resolver com BFS escolhendo o melhor veículo")
-        print(Fore.YELLOW + "0 - " + Fore.RESET + "Sair")
+def resolve_with_bfs(graph):
+    start_node = input(Fore.YELLOW + "Digite o nome da zona inicial para BFS: " + Fore.RESET).strip()
+    end_node = input(Fore.YELLOW + "Digite o nome da zona final para BFS: " + Fore.RESET).strip()
+    carga = int(input(Fore.YELLOW + "Digite a carga que será transportada (em kg): " + Fore.RESET))
 
-        if not graph:
-            notify("error", "Graph not initialized.")
-            exit_program()
+    # Primeiro, encontrar um caminho válido usando BFS
+    path, cost = graph.bfs_find_path(start_node, end_node)
 
-        option = int(input(Fore.YELLOW + "Escolha uma opcao: " + Fore.RESET))
-        if option == 0:
-            exit_program()
-        elif option == 1:
-            print(graph.graph)
-            press_key()
-        elif option == 2:
-            graph.draw_graph()
-            press_key()
-        elif option == 3:
-            graph.draw_map()
-            press_key()
-        elif option == 4:
-            print("Resolver com DFS")
-            press_key()
-        elif option == 5:
-            start_node = input(Fore.YELLOW + "Digite o nome da zona inicial para BFS: " + Fore.RESET).strip()
-            end_node = input(Fore.YELLOW + "Digite o nome da zona final para BFS: " + Fore.RESET).strip()
-            carga = int(input(Fore.YELLOW + "Digite a carga que será transportada (em kg): " + Fore.RESET))
+    if path is None:
+        print(Fore.RED + f"Nenhum caminho válido encontrado de {start_node} para {end_node}." + Fore.RESET)
+    else:
+        print(Fore.GREEN + f"Caminho encontrado: {path} com custo total de {cost}" + Fore.RESET)
+        # Escolher o melhor veículo baseado na carga
+        veiculo_escolhido = escolher_veiculo(carga)
+        print(Fore.CYAN + f"Veículo escolhido: {veiculo_escolhido.get_tipo_name()}" + Fore.RESET)
 
-            # Primeiro, encontrar um caminho válido usando BFS
-            path, cost = graph.bfs_find_path(start_node, end_node)
+        # Resolver com o veículo escolhido
+        path, cost = graph.bfs_with_vehicle(start_node, end_node, veiculo_escolhido)
 
-            if path is None:
-                print(Fore.RED + f"Nenhum caminho válido encontrado de {start_node} para {end_node}." + Fore.RESET)
-            else:
-                print(Fore.GREEN + f"Caminho encontrado: {path} com custo total de {cost}" + Fore.RESET)
-                # Escolher o melhor veículo baseado na carga
-                veiculo_escolhido = escolher_veiculo(carga)
-                print(Fore.CYAN + f"Veículo escolhido: {veiculo_escolhido.get_tipo_name()}" + Fore.RESET)
-
-                # Resolver com o veículo escolhido
-                path, cost = graph.bfs_with_vehicle(start_node, end_node, veiculo_escolhido)
-
-                if path is None:
-                    print(Fore.RED + f"Nenhum caminho válido encontrado de {start_node} para {end_node} com o veículo escolhido." + Fore.RESET)
-                else:
-                    print(Fore.GREEN + f"Caminho encontrado com o veículo {veiculo_escolhido.get_tipo_name()}: {path} com custo total de {cost}" + Fore.RESET)
-            press_key()
+        if path is None:
+            print(Fore.RED + f"Nenhum caminho válido encontrado de {start_node} para {end_node} com o veículo escolhido." + Fore.RESET)
         else:
-            notify("error", "Opção inválida. Tente novamente.")
+            print(Fore.GREEN + f"Caminho encontrado com o veículo {veiculo_escolhido.get_tipo_name()}: {path} com custo total de {cost}" + Fore.RESET)
 
 def escolher_veiculo(carga):
     veiculos = [
@@ -109,6 +75,14 @@ def escolher_veiculo(carga):
         if carga <= veiculo.get_carga_max():
             return veiculo
     raise ValueError("Nenhum veículo disponível para transportar essa carga.")
+
+def main():
+    args = sys.argv
+    if len(args) < 2:
+        notify("error", "Invalid arguments. Select the type of graph you want to use:")
+        run_main()
+    else:
+        run_menu(args)
 
 def exit_program():
     notify("warning", "Exiting...")
