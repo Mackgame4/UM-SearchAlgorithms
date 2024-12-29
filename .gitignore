@@ -122,8 +122,8 @@ __pypackages__/
 Thumbs.db
 
 # Relatorio
-relatorio/*.pdf
+#relatorio/*.pdf
 
 # Cache files
 *.cache
-cache/*
+cache/
