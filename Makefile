@@ -3,6 +3,12 @@ all: dev
 dev:
 	@python src/main.py $(args)
 
+test:
+	@python src/main.py test
+
+run_dynamic:
+	@python src/main.py run_dynamic
+
 relatorio: relatorio_build
 
 relatorio_build:
