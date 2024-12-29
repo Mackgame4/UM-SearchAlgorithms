@@ -4,6 +4,7 @@ from classes.node import Node
 import geopandas as gpd
 from classes.zone import Zone
 from collections import deque
+from shapely.geometry import Point
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning)  # Hide UserWarning messages from geopandas
@@ -15,14 +16,14 @@ class Graph:
         self.zones = {}
         self.camp = None
 
+    # Add a zone to the graph
     def add_zone(self, zone):
-        """Add a zone to the graph."""
         if not isinstance(zone, Zone):
             raise ValueError("Argument must be of type Zone")
         self.zones[zone.get_name()] = zone
 
     def add_edge(self, zone1, zone2, travel_time, fuel_cost, good_conditions):
-        """Add an edge between two zones."""
+        # Add an edge between two zones
         if not isinstance(zone1, Zone) or not isinstance(zone2, Zone):
             raise ValueError("Both arguments must be of type Zone")
 
