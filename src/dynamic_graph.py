@@ -59,9 +59,3 @@ class DynamicGraph(Graph):
                     good_conditions = random.choices([True, False], weights=self.zone_good_conditions_weights, k=1)[0]  # Having good conditions is more likely
                     self.add_edge(zone1, zone2, travel_time, fuel_cost, good_conditions)
                     neighbors_added += 1
-
-    def bfs_with_vehicle(self, start_node_name, end_node_name, vehicle):
-        # Reuse the parent implementation but add DynamicGraph-specific adjustments if needed
-        return super().bfs_with_vehicle(start_node_name, end_node_name, vehicle)
-
-# DynamicGraph now inherits the optimized BFS with vehicle logic from the Graph class.

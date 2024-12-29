@@ -5,8 +5,8 @@ import geopandas as gpd
 from classes.zone import Zone
 from collections import deque
 from shapely.geometry import Point
-import warnings
 
+import warnings
 warnings.filterwarnings("ignore", category=UserWarning)  # Hide UserWarning messages from geopandas
 
 class Graph:
@@ -15,12 +15,6 @@ class Graph:
         self.graph = {}
         self.zones = {}
         self.camp = None
-
-    # Add a zone to the graph
-    def add_zone(self, zone):
-        if not isinstance(zone, Zone):
-            raise ValueError("Argument must be of type Zone")
-        self.zones[zone.get_name()] = zone
 
     def add_edge(self, zone1, zone2, travel_time, fuel_cost, good_conditions):
         # Add an edge between two zones
@@ -51,44 +45,6 @@ class Graph:
         self.graph[node1].append((node2, (travel_time, fuel_cost, good_conditions)))
         self.graph[node2].append((node1, (travel_time, fuel_cost, good_conditions)))  # Add edge in both directions (undirected graph)
 
-    def bfs_with_vehicle(self, start_node_name, end_node_name, vehicle):
-        if start_node_name not in self.graph or end_node_name not in self.graph:
-            print(f"Node {start_node_name} or {end_node_name} not found in the graph")
-            return None, None
-
-        visited = set()
-        queue = deque([(start_node_name, [start_node_name], 0, 0)])  # (current_node, path, total_cost, total_distance)
-
-        while queue:
-            current_node, path, total_cost, total_distance = queue.popleft()
-
-            # Verifica se chegamos ao nó final
-            if current_node == end_node_name:
-                return path, total_cost
-
-            if current_node not in visited:
-                visited.add(current_node)
-
-                for neighbor, (travel_time, fuel_cost, good_conditions) in self.graph[current_node]:
-                    # Verifica se o veículo é permitido e se tem autonomia suficiente para o próximo trajeto
-                    permitted_vehicles = self.zones[current_node].get_permitted_vehicles()
-                    distance = travel_time  # A distância é equivalente ao tempo de viagem para simplificação
-
-                    # Condição para verificar se o veículo é adequado para o trecho
-                    if vehicle.get_tipo() in permitted_vehicles:
-                        if good_conditions or vehicle.get_tipo() in {1, 2, 5}:  # Verifica se as condições são boas ou se o veículo é adequado
-                            if vehicle.get_autonomia() >= (total_distance + distance):  # Verifica se a autonomia é suficiente
-                                if neighbor not in visited:
-                                    # Calcular o custo ponderado e adicionar à fila
-                                    custo_ponderado = (distance / vehicle.get_velocidade()) + fuel_cost  # Exemplo de cálculo de custo
-                                    queue.append((neighbor, path + [neighbor], total_cost + custo_ponderado, total_distance + distance))
-
-        # Caso nenhum caminho seja encontrado
-        print(f"No valid path found from {start_node_name} to {end_node_name}. Prioritizing finding a path...")
-        return None, None
-
-    # Other methods are unchanged
-
     def get_nodes(self):
         return self.nodes
 
@@ -108,6 +64,8 @@ class Graph:
         self.zones = zones
 
     def add_zone(self, zone):
+        if not isinstance(zone, Zone):
+            raise ValueError("Argument must be of type Zone")
         self.zones[zone.get_name()] = zone
 
     def set_camp(self, camp):

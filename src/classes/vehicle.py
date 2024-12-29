@@ -2,11 +2,10 @@ class Vehicle:
     def __init__(self, tipo=3):
         self.tipos = {
             0: "Drone",
-            1: "Helicóptero",
-            2: "Caminhão",
+            1: "Helicoptero",
+            2: "Camiao",
             3: "Carro",
-            4: "Moto",
-            5: "Barco"
+            4: "Moto"
         }
         self.tipo = tipo
 
@@ -36,11 +35,6 @@ class Vehicle:
             self.velocidade = 100  # km/h
             self.autonomia = 300  # km
             self.consumo = 0.2  # litros/km
-        elif tipo == 5:  # Barco
-            self.carga_max = 5000  # kg
-            self.velocidade = 40  # km/h
-            self.autonomia = 500  # km
-            self.consumo = 1.5  # litros/km
 
         # Variável para armazenar a carga atual
         self.carga_atual = 0  # kg
@@ -78,8 +72,12 @@ class Vehicle:
     def get_consumo(self):
         return self.consumo
 
+    # Define a carga atual a ser transportada
     def set_carga_atual(self, carga):
-        """Define a carga atual a ser transportada."""
-        if carga > self.carga_max:
-            raise ValueError(f"A carga ({carga} kg) excede a capacidade máxima do veículo ({self.carga_max} kg).")
+        #if carga > self.carga_max:
+            #raise ValueError(f"A carga ({carga} kg) excede a capacidade máxima do veículo ({self.carga_max} kg).")
         self.carga_atual = carga
+
+    # Retorna os tipos de veículos disponíveis com a carga_max > carga_atual
+    def get_possible_vehicles(self):
+        return [Vehicle(tipo=tipo) for tipo in self.tipos if Vehicle(tipo=tipo).get_carga_max() >= self.carga_atual]

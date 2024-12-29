@@ -36,7 +36,7 @@ class Menu:
         return func
     
     """
-    Closes the menu. (So it doent interfere with a new opened menu)
+    Closes the menu. (So it doesn't interfere with a newly opened menu)
     """
     def close(self):
         self.closed = True
@@ -61,9 +61,16 @@ class Menu:
                     self.exit_func()
                     break
                 elif 1 <= choice <= len(self.entries):
-                    self.entries[choice - 1][1]() # Execute the corresponding function
-                    press_key()
-                    clear()
+                    try:
+                        self.entries[choice - 1][1]()  # Execute the corresponding function
+                    except Exception as e:
+                        # Handle the error gracefully without crashing the menu
+                        notify("error", f"Erro: {str(e)}")
+                        press_key()  # Wait for the user to acknowledge the error
+                        clear()
+                    else:
+                        press_key()  # Wait for the user to press any key after the function is done
+                        clear()
                 else:
                     clear()
                     notify("error", INVALID_OPTION)
