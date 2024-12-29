@@ -6,6 +6,7 @@ from irl_graph import IRLGraph
 from classes.vehicle import Vehicle
 from utils.notify import notify
 from utils.menu import Menu
+from classes.algorithms import procura_BFS, procura_DFS
 
 def run_main():
     main_menu = Menu("Selecione o tipo de grafo que deseja utilizar:")
@@ -31,21 +32,33 @@ def run_menu(args):
     graph_menu = Menu("Selecione uma opção:")
     graph_menu.add_entry("Imprimir Grafo", lambda: print(graph.graph))
     graph_menu.add_entry("Desenhar Grafo", lambda: graph.draw_graph())
+    graph_menu.add_entry("Imprimir Nodos", lambda: print(graph.graph.keys()))
+    graph_menu.add_entry("Imprimir Arestas", lambda: graph.print_edges())
     graph_menu.add_entry("Desenhar Mapa", lambda: graph.draw_map())
-    graph_menu.add_entry("Resolver com DFS", lambda: print("Resolver com DFS"))
+    graph_menu.add_entry("Resolver com DFS", lambda: resolve_with_dfs(graph))
     graph_menu.add_entry("Resolver com BFS", lambda: resolve_with_bfs(graph))
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 
+def resolve_with_dfs(graph):
+    start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
+    end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
+    print("Resolver com DFS")
+    path = []
+    visited = set()
+    print(procura_DFS(start_node, end_node, path, visited, graph))
+    # Angola -> Malawi ((['Angola', 'Botswana', 'Namibia', 'Zambia', 'Zimbabwe', 'Malawi'], 7730))
+
 def resolve_with_bfs(graph):
-    start_node = input(Fore.YELLOW + "Digite o nome da zona inicial para BFS: " + Fore.RESET).strip()
-    end_node = input(Fore.YELLOW + "Digite o nome da zona final para BFS: " + Fore.RESET).strip()
-    carga = int(input(Fore.YELLOW + "Digite a carga que será transportada (em kg): " + Fore.RESET))
-    vehicle = Vehicle()
-    vehicle.set_carga_atual(carga)
-    print(vehicle.get_possible_vehicles())
+    start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
+    end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
+    #carga = int(input(Fore.YELLOW + "Digite a carga que será transportada (em kg): " + Fore.RESET))
+    #vehicle = Vehicle()
+    #vehicle.set_carga_atual(carga)
+    #print(vehicle.get_possible_vehicles())
     #graph.bfs(start_node, end_node, vehicle)
-    print("Resolver com BFS", vehicle)
+    print("Resolver com BFS")
+    print(procura_BFS(start_node, end_node, graph))
 
 def main():
     args = sys.argv

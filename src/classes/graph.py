@@ -5,6 +5,7 @@ import geopandas as gpd
 from classes.zone import Zone
 from collections import deque
 from shapely.geometry import Point
+import math
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)  # Hide UserWarning messages from geopandas
@@ -14,7 +15,9 @@ class Graph:
         self.nodes = []
         self.graph = {}
         self.zones = {}
+        self.directed = False
         self.camp = None
+        self.heuristic = {}
 
     def add_edge(self, zone1, zone2, travel_time, fuel_cost, good_conditions):
         # Add an edge between two zones
@@ -43,7 +46,8 @@ class Graph:
 
         # Adding vehicles permitted for each edge
         self.graph[node1].append((node2, (travel_time, fuel_cost, good_conditions)))
-        self.graph[node2].append((node1, (travel_time, fuel_cost, good_conditions)))  # Add edge in both directions (undirected graph)
+        if not self.directed:
+            self.graph[node2].append((node1, (travel_time, fuel_cost, good_conditions))) # Add edge in both directions (undirected graph)
 
     def get_nodes(self):
         return self.nodes
@@ -85,6 +89,43 @@ class Graph:
             node_name = node.get_name()
             nodes.append((node_name, self.zones[node_name].get_population(), self.zones[node_name].get_severity(), self.zones[node_name].get_ttl(), self.zones[node_name].get_permitted_vehicles()))
         return nodes
+    
+    def print_edges(self):
+        for node in self.nodes:
+            node_name = node.get_name()
+            print(f"Node: {node_name}")
+            for (adjacente, (travel_time, fuel_cost, good_conditions)) in self.graph[node_name]:
+                print(f"-> {adjacente} ({travel_time}, {fuel_cost}, {good_conditions})")
+
+    def add_heuristic(self, n, estima):
+        n1 = Node(n)
+        if n1 in self.nodes:
+            self.heuristic[n] = estima
+
+    def get_node_heuristic(self, nodo):
+        if nodo not in self.heuristic.keys():
+            return 1000
+        else:
+            return (self.heuristic[nodo])
+        
+    def get_arc_cost(self, node1, node2):
+        custoT = math.inf
+        a = self.graph[node1]  # lista de arestas para aquele nodo
+        for (nodo, (travel_time, fuel_cost, _)) in a:
+            custo = travel_time * fuel_cost
+            if nodo == node2:
+                custoT = custo
+        return custoT
+
+    # Dado um caminho calcula o seu custo
+    def calcula_custo(self, caminho):
+        teste = caminho # caminho é uma lista de nodos
+        custo = 0
+        i = 0
+        while i + 1 < len(teste):
+            custo = custo + self.get_arc_cost(teste[i], teste[i + 1])
+            i = i + 1
+        return custo
 
     def draw_graph(self):
         g = nx.Graph()

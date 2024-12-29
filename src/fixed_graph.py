@@ -32,3 +32,6 @@ class FixedGraph(Graph): # Inherit from Graph
         self.add_edge(self.zones[6], self.zones[4], 90, 8, True)
         self.add_edge(self.zones[6], self.zones[5], 95, 7, True)
         self.add_edge(self.zones[6], self.zones[2], 125, 20, False)
+        self.add_heuristic(self.zones[0], self.zones[0].get_severity()) # heuristica é a gravidade
+        self.add_heuristic(self.zones[1], self.zones[1].get_severity())
+        self.add_heuristic(self.zones[2], self.zones[2].get_severity())

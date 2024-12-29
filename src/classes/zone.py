@@ -3,8 +3,8 @@ class Zone:
         self.name = str(name)
         self.population = population
         self.severity = severity
-        self.ttl = ttl  # Time to live (janela de tempo critica)
-        self.permitted_vehicles = permitted_vehicles  # Dicionário de veículos que podem aceder a esta zona
+        self.ttl = ttl # Time to live (janela de tempo critica)
+        self.permitted_vehicles = permitted_vehicles # Dicionário de veículos que podem aceder a esta zona
 
     def is_vehicle_permitted(self, vehicle, good_conditions):
         vehicle_name = vehicle.get_tipo_name()
