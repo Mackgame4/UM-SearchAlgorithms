@@ -93,12 +93,12 @@ class Graph:
         for node in self.nodes:
             node_name = node.get_name()
             g.add_node(node_name)
-            for (adjacente, (travel_time, fuel_cost, good_conditions)) in self.graph[node_name]:
-                g.add_edge(node_name, adjacente, travel_time=travel_time, fuel_cost=fuel_cost, good_conditions=good_conditions)
+            for (adjacente, (travel_time, fuel_cost, good_conditions, vehicles)) in self.graph[node_name]:
+                g.add_edge(node_name, adjacente, travel_time=travel_time, fuel_cost=fuel_cost, good_conditions=good_conditions, vehicles=vehicles)
         pos = nx.spring_layout(g, seed=39)
         plt.figure(figsize=(12, 8))
         nx.draw_networkx(g, pos, with_labels=True, font_weight='bold', node_size=800, node_color='skyblue')
-        labels = {(u, v): f"({d['travel_time']}, {d['fuel_cost']}, {d['good_conditions']})" for u, v, d in g.edges(data=True)}
+        labels = {(u, v): f"({d['travel_time']}, {d['fuel_cost']}, {d['good_conditions']}, {d['vehicles']})" for u, v, d in g.edges(data=True)}
         nx.draw_networkx_edge_labels(g, pos, edge_labels=labels)
         plt.title("Graph of Zones")
         plt.show()
