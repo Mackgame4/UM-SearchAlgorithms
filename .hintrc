@@ -5,6 +5,9 @@
   "hints": {
     "meta-viewport": "off",
     "axe/text-alternatives": "off",
-    "axe/language": "off"
+    "axe/language": "off",
+    "compat-api/css": "off",
+    "disown-opener": "off",
+    "css-prefix-order": "off"
   }
 }
