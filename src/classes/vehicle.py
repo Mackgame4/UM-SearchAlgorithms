@@ -50,19 +50,21 @@ class Vehicle:
     def set_speed(self, speed):
         self.speed = speed
 
+VEHICLE_TYPES: dict[int, Vehicle] = {
+    0: Vehicle("Carro", 300, 400, 120),
+    1: Vehicle("Moto", 100, 200, 80),
+    2: Vehicle("Caminhão", 1000, 800, 80),
+    3: Vehicle("Helicoptero", 500, 600, 200),
+    4: Vehicle("Drone", 100, 1000, 200)
+}
+
 class VehicleType:
-    def __init__(self, type=0):
+    def __init__(self, type: int=0):
         """
         Representa um tipo de veículo.
         :param type: Tipo de veículo
         """
-        self.types = {
-            0: Vehicle("Carro", 300, 400, 120),
-            1: Vehicle("Moto", 100, 200, 80),
-            2: Vehicle("Caminhão", 1000, 800, 80),
-            3: Vehicle("Helicoptero", 500, 600, 200),
-            4: Vehicle("Drone", 100, 1000, 200)
-        }
+        self.types = VEHICLE_TYPES
         self.type = type
         
     def __str__(self):
@@ -78,15 +80,21 @@ class VehicleType:
         return hash(self.types[self.type])
     
     """ Getters """
-    def get_type(self):
+    def get_type(self) -> int:
         return self.type
 
-    def get_vehicle(self):
+    def get_vehicle(self) -> Vehicle:
         return self.types[self.type]
     
-    def get_vehicle_types(self):
+    def get_vehicle_types(self) -> dict[int, Vehicle]:
         return self.types
     
+    def get_possible_vehicles(self) -> list[Vehicle]:
+        return self.types.values()
+
+    def get_n_vehicle_types(self) -> int:
+        return len(self.types)
+
     """ Setters """
     def set_type(self, type):
         self.type = type
@@ -96,3 +104,6 @@ class VehicleType:
 
     def set_vehicle_types(self, types):
         self.types = types
+
+    def set_possible_vehicles(self, vehicles):
+        self.types = vehicles

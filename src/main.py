@@ -43,8 +43,8 @@ def run_menu(args: list):
     graph_menu.show()
 
 def resolve_with_dfs(graph: Graph):
-    start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
-    end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
+    start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip() # TODO: Get camp node
+    end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip() # TODO: Get affected nodes (zone.get_severity > 0)
     print("Resolver com DFS")
     path = []
     visited = set()

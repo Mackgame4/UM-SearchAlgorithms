@@ -1,6 +1,6 @@
 from classes.zone import Zone
 from classes.graph import Graph
-from classes.vehicle import Vehicle, VehicleType
+from classes.vehicle import VehicleType, VEHICLE_TYPES
 import random
 import geopandas as gpd
 
@@ -94,7 +94,7 @@ class DynamicGraph(Graph):
                     good_conditions = random.choices([True, False], weights=self.zone_good_conditions_weights, k=1)[0] # Having good conditions is more likely
                     vehicles = set()
                     for _ in range(random.randint(*self.edge_vehicle_limits)):
-                        vehicles.add(VehicleType(random.randint(0, 4))) # Random vehicle type
+                        vehicles.add(VehicleType(random.randint(0, VEHICLE_TYPES.__len__() - 1))) # Randomly choose a vehicle
                     self.add_edge(zone1, zone2, travel_time, fuel_cost, good_conditions, vehicles)
                     neighbors_added += 1
         # Calculate heuristics based on severity and population
