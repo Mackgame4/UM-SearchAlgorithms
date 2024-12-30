@@ -35,6 +35,13 @@ def run_menu(args: list):
     graph_menu.add_entry("[Desenhar] Mapa", lambda: graph.draw_map())
     graph_menu.add_entry("[Resolver] com DFS", lambda: resolve_with_dfs(graph))
     graph_menu.add_entry("[Resolver] com BFS", lambda: resolve_with_bfs(graph))
+    graph_menu.add_entry("[Resolver] com A*", lambda: print("Resolver com A*"))
+    graph_menu.add_entry("[Resolver] com Greedy", lambda: print("Resolver com Greedy"))
+    graph_menu.add_entry("[Resolver] com Uniform Cost", lambda: print("Resolver com Uniform Cost"))
+    graph_menu.add_entry("[Resolver] com Hill Climbing", lambda: print("Resolver com Hill Climbing"))
+    graph_menu.add_entry("[Resolver] com Simulated Annealing", lambda: print("Resolver com Simulated Annealing"))
+    graph_menu.add_entry("[Resolver] com Genetic Algorithm", lambda: print("Resolver com Genetic Algorithm"))
+    graph_menu.add_entry("[Resolver] com Estratégia Desenvolvida", lambda: print("Resolver com Estratégia Desenvolvida pelo grupo"))
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 
