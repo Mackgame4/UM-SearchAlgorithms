@@ -29,22 +29,22 @@ class Zone:
         return hash(self.name)
 
     """ Getters """
-    def get_id(self):
+    def get_id(self) -> int:
         return self.id
     
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
     
-    def get_population(self):
+    def get_population(self) -> int:
         return self.population
     
-    def get_severity(self):
+    def get_severity(self) -> int:
         return self.severity
     
-    def get_ttl(self):
+    def get_ttl(self) -> int:
         return self.ttl
     
-    def is_camp(self):
+    def is_camp(self) -> bool:
         return self.camp
     
     """ Setters """

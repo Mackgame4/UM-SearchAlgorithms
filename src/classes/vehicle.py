@@ -25,16 +25,16 @@ class Vehicle:
         return hash(self.name)
     
     """ Getters """
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
     
-    def get_capacity(self):
+    def get_capacity(self) -> int:
         return self.capacity
     
-    def get_range(self):
+    def get_range(self) -> int:
         return self.range
     
-    def get_speed(self):
+    def get_speed(self) -> int:
         return self.speed
     
     """ Setters """

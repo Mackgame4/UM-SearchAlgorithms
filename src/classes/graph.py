@@ -26,11 +26,20 @@ class Graph:
     def get_nodes(self) -> list[Zone]:
         return self.nodes
     
-    def get_graph(self) -> dict[str, list[Any]]:
-        return self.graph
+    def get_node(self, node: str) -> Zone:
+        return Zone(node)
     
     def get_heuristics(self) -> dict[str, int]:
         return self.heuristics
+    
+    def get_heuristic(self, node: str) -> int:
+        if node not in self.heuristics.keys():
+            return math.inf
+        else:
+            return self.heuristics[node]
+    
+    def get_graph(self) -> dict[str, list[Any]]:
+        return self.graph
     
     def is_directed(self) -> bool:
         return self.directed
@@ -39,8 +48,10 @@ class Graph:
     def add_node(self, node: Zone):
         self.nodes.append(node)
 
-    def set_heuristic(self, node: str, value: int):
-        self.heuristics[node] = value
+    def add_heuristic(self, node: str, value: int):
+        n1 = Zone(node)
+        if n1 in self.nodes:
+            self.heuristics[node] = value
 
     def set_directed(self, directed: bool):
         self.directed = directed
@@ -81,7 +92,7 @@ class Graph:
         if not self.directed:
             self.graph[node2].append((node1, (travel_time, fuel_cost, good_conditions, vehicles))) # Add edge in both directions (undirected graph)
 
-    def print_edges(self) -> dict[str, list[Any]]:
+    def print_edges(self):
         for node in self.nodes:
             node_name = node.get_name()
             print(f"Node: {node_name}")
