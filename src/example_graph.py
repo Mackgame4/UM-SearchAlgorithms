@@ -18,13 +18,13 @@ class FixedGraph(Graph): # Inherit from Graph
     def example_graph(self):
         # Create nodes
         self.zones = {
-            0: Zone("Botswana", 100, 2, 700, False), # Most affected zone
-            1: Zone("Namibia", 400, 1, 400, False), # Affected zone
+            0: Zone("Botswana", 100, 0, 700, False),
+            1: Zone("Namibia", 400, 0, 400, False),
             2: Zone("Zimbabwe", 300, 0, 600, False),
             3: Zone("Angola", 400, 0, 500, True), # Camp base
             4: Zone("Zambia", 500, 0, 800, False),
-            5: Zone("Tanzania", 600, 0, 900, False),
-            6: Zone("Malawi", 700, 0, 1000, False)
+            5: Zone("Tanzania", 600, 1, 900, False), # Affected zone
+            6: Zone("Malawi", 700, 2, 1000, False) # Most affected zone
         }
         self.add_edge(self.zones[0], self.zones[1], 100, 10, True, {VehicleType(0), VehicleType(1)})
         self.add_edge(self.zones[0], self.zones[2], 200, 8, True, {VehicleType(2), VehicleType(3)})
@@ -38,9 +38,8 @@ class FixedGraph(Graph): # Inherit from Graph
         self.add_edge(self.zones[6], self.zones[4], 90, 8, True, {VehicleType(2), VehicleType(3)})
         self.add_edge(self.zones[6], self.zones[5], 95, 7, True, {VehicleType(0), VehicleType(1)})
         self.add_edge(self.zones[6], self.zones[2], 125, 20, False, {VehicleType(2), VehicleType(3)})
-        # Heuristica é a gravidade da zone (definição da Função de Heuristica)
         for zone in self.zones.values():
-            self.add_heuristic(zone.get_name(), zone.get_severity())
+            self.add_heuristic(zone.get_name(), self.heuristic_function(zone))
 
 class DynamicGraph(Graph):
     def __init__(self, continent="Africa", max_edges_per_zone=2, max_affected_zones=2, edge_max_vehicles=5):
@@ -97,10 +96,9 @@ class DynamicGraph(Graph):
                         vehicles.add(VehicleType(random.randint(0, VEHICLE_TYPES.__len__() - 1))) # Randomly choose a vehicle
                     self.add_edge(zone1, zone2, travel_time, fuel_cost, good_conditions, vehicles)
                     neighbors_added += 1
-        # Calculate heuristics based on severity and population
+        # Calculate heuristics for each zone
         for zone in self.zones.values():
-            heuristic_calc = zone.get_severity() * 1000 + zone.get_population() // 1000
-            self.add_heuristic(zone.get_name(), heuristic_calc)
+            self.add_heuristic(zone.get_name(), self.heuristic_function(zone))
 
 """
 # TODO: Implement the IRLGraph class

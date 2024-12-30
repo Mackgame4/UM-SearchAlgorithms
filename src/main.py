@@ -43,13 +43,16 @@ def run_menu(args: list):
     graph_menu.show()
 
 def resolve_with_dfs(graph: Graph):
-    start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip() # TODO: Get camp node
-    end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip() # TODO: Get affected nodes (zone.get_severity > 0)
-    print("Resolver com DFS")
+    #start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
+    #end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
+    start_node = graph.get_camp_node()
+    end_nodes = graph.get_affected_nodes()
+    notify("debug", f"A resolver com DFS de {start_node} para {end_nodes}")
     path = []
     visited = set()
-    print(procura_DFS(start_node, end_node, path, visited, graph))
-    # Angola -> Malawi ((['Angola', 'Botswana', 'Namibia', 'Zambia', 'Zimbabwe', 'Malawi'], 7730))
+    res = procura_DFS(start_node, end_nodes, graph, path, visited)
+    if res != None:
+        notify("info", f"Resultado: {res}") # Exemplo usando o grafo fixo: Angola -> Malawi ((['Angola', 'Botswana', 'Namibia', 'Zambia', 'Zimbabwe', 'Malawi'], 7730))
 
 def resolve_with_bfs(graph: Graph):
     start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()

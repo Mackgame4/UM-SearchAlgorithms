@@ -1,20 +1,19 @@
 from classes.graph import Graph
 from queue import Queue
 
-def procura_DFS(start, end, path=[], visited=set(), graph=Graph()):
-        path.append(start)
-        visited.add(start)
-
-        if start == end:
+def procura_DFS(start_node, end_nodes, graph: Graph, path: list[str]=[], visited: set[str]={}):
+        path.append(start_node)
+        visited.add(start_node)
+        if start_node in end_nodes:
             # calcular o custo do caminho funçao calcula custo.
             custoT = graph.calcula_custo(path)
             return (path, custoT)
-        for (adjacente, peso) in graph.graph[start]:
-            if adjacente not in visited:
-                resultado = procura_DFS(adjacente, end, path, visited, graph)
+        for (adjacente, _) in graph.graph[start_node]:
+            if adjacente not in visited: # TODO: only add to visited if the vehicle is capable of going there
+                resultado = procura_DFS(adjacente, end_nodes, graph, path, visited)
                 if resultado is not None:
                     return resultado
-        path.pop()  # se nao encontra remover o que está no caminho
+        path.pop() # se nao encontra remover o que está no caminho
         return None
 
 def procura_BFS(start, end, graph=Graph()):

@@ -76,10 +76,10 @@ class Graph:
         node1 = zone1.get_name()
         node2 = zone2.get_name()
         if zone1 not in self.nodes:
-            self.nodes.append(zone1)
+            self.add_node(zone1)
             self.graph[node1] = []
         if zone2 not in self.nodes:
-            self.nodes.append(zone2)
+            self.add_node(zone2)
             self.graph[node2] = []
         # Adding vehicles permitted for each edge
         self.graph[node1].append((node2, (travel_time, fuel_cost, good_conditions, vehicles)))
@@ -96,6 +96,62 @@ class Graph:
             print(f"Node: {node_name}")
             for (adjacente, (travel_time, fuel_cost, good_conditions, vehicles)) in self.graph[node_name]:
                 print(f"  -> {adjacente} ({travel_time}, {fuel_cost}, {good_conditions}, {vehicles})")
+
+    def heuristic_function(self, node: Zone) -> int:
+        """
+        Calculate the heuristic value for a node. (Heuristic function definition)
+        :param node: Node for which to calculate the heuristic.
+        :return: Heuristic value for the node.
+        """
+        return node.get_severity() * 100 + node.get_population() // 100
+
+    def edge_cost_function(self, node1: Zone, node2: Zone) -> int:
+        """
+        Calculate the cost of an edge between two nodes. (Cost function definition)
+        :param node1: Node 1.
+        :param node2: Node 2.
+        :return: Cost of the edge between the two nodes.
+        """
+        # o custo será o tempo de viagem entre os dois nodos a dividir pelo custo do combustível e se não houver boas condições o tesmpo é 1.5 vezes maior
+        formula = lambda travel_time, fuel_cost, good_conditions: travel_time / fuel_cost if good_conditions else travel_time / fuel_cost * 1.5
+        costAux = math.inf
+        node_edges = self.graph[node1] # lista de arestas para aquele nodo
+        for (node, (travel_time, fuel_cost, good_conditions, _)) in node_edges:
+            if node == node2:
+                costAux = formula(travel_time, fuel_cost, good_conditions)
+        return costAux
+    
+    def calcula_custo(self, path: list[str]) -> int:
+        """
+        Calculate the cost of a path.
+        :param path: List of nodes in the path.
+        :return: Cost of the path.
+        """
+        cost = 0
+        for i in range(len(path) - 1):
+            cost += self.edge_cost_function(path[i], path[i + 1])
+        return cost
+
+    def get_camp_node(self) -> str:
+        """
+        Get the name of the camp node.
+        :return: Name of the camp node.
+        """
+        for node in self.nodes:
+            if node.is_camp():
+                return node.get_name()
+        return None
+    
+    def get_affected_nodes(self) -> list[str]:
+        """
+        Get the names of the affected zones (zones with severity > 0).
+        :return: List of affected zones.
+        """
+        affected_nodes = []
+        for node in self.nodes:
+            if node.get_severity() > 0:
+                affected_nodes.append(node.get_name())
+        return affected_nodes
 
     def draw_graph(self):
         g = nx.Graph()
