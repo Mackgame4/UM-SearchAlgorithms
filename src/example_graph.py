@@ -3,16 +3,53 @@ from classes.graph import Graph
 from classes.vehicle import Vehicle, VehicleType
 import random
 import geopandas as gpd
-import osmnx as ox
-#import networkx as nx
-#import matplotlib.pyplot as plt
-#from classes.node import Node
 
 import warnings
-warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=FutureWarning) # Hide FutureWarning messages from geopandas
+
+class FixedGraph(Graph): # Inherit from Graph
+    """
+    FixedGraph extends graph and creates a fixed graph with fixed zones and edges (defined manually).
+    """
+    def __init__(self):
+        super().__init__() # Initialize the parent Graph class
+        self.example_graph() # Set up the example graph
+
+    def example_graph(self):
+        # Create nodes
+        self.zones = {
+            0: Zone("Botswana", 100, 2, 700, False), # Most affected zone
+            1: Zone("Namibia", 400, 1, 400, False), # Affected zone
+            2: Zone("Zimbabwe", 300, 0, 600, False),
+            3: Zone("Angola", 400, 0, 500, True), # Camp base
+            4: Zone("Zambia", 500, 0, 800, False),
+            5: Zone("Tanzania", 600, 0, 900, False),
+            6: Zone("Malawi", 700, 0, 1000, False)
+        }
+        self.add_edge(self.zones[0], self.zones[1], 100, 10, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[0], self.zones[2], 200, 8, True, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[0], self.zones[3], 120, 15, True, {VehicleType(0), VehicleType(3)})
+        self.add_edge(self.zones[0], self.zones[4], 110, 12, True, {VehicleType(1), VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[4], self.zones[2], 170, 9, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[4], self.zones[5], 190, 7, True, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[4], self.zones[3], 130, 10, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[1], self.zones[3], 120, 11, False, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[1], self.zones[4], 100, 9, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[6], self.zones[4], 90, 8, True, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[6], self.zones[5], 95, 7, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[6], self.zones[2], 125, 20, False, {VehicleType(2), VehicleType(3)})
+        # Heuristica é a gravidade da zone (definição da Função de Heuristica)
+        for zone in self.zones.values():
+            self.add_heuristic(zone.get_name(), zone.get_severity())
 
 class DynamicGraph(Graph):
     def __init__(self, continent="Africa", max_edges_per_zone=3, max_affected_zones=2):
+        """
+        DynamicGraph extends graph and creates a dynamic graph with random zones and edges.
+        :param continent: Continent to generate the graph.
+        :param max_edges_per_zone: Maximum number of edges per zone.
+        :param max_affected_zones: Maximum number of affected zones.
+        """
         super().__init__()
         self.continent = continent
         self.max_edges_per_zone = max_edges_per_zone
@@ -67,39 +104,7 @@ class DynamicGraph(Graph):
                     self.add_edge(zone1, zone2, travel_time, fuel_cost, good_conditions)
                     neighbors_added += 1
 
-# FixedGraph extends graph and creates a fixed graph with fixed zones and edges (defined manually)
-class FixedGraph(Graph): # Inherit from Graph
-    def __init__(self):
-        super().__init__() # Initialize the parent Graph class
-        self.example_graph() # Set up the example graph
-
-    def example_graph(self):
-        # Create nodes
-        self.zones = {
-            0: Zone("Botswana", 100, 2, 700, False), # Most affected zone
-            1: Zone("Namibia", 400, 1, 400, False), # Affected zone
-            2: Zone("Zimbabwe", 300, 0, 600, False),
-            3: Zone("Angola", 400, 0, 500, True), # ONU base
-            4: Zone("Zambia", 500, 0, 800, False),
-            5: Zone("Tanzania", 600, 0, 900, False),
-            6: Zone("Malawi", 700, 0, 1000, False)
-        }
-        self.add_edge(self.zones[0], self.zones[1], 100, 10, True, {VehicleType(0), VehicleType(1)})
-        self.add_edge(self.zones[0], self.zones[2], 200, 8, True, {VehicleType(2), VehicleType(3)})
-        self.add_edge(self.zones[0], self.zones[3], 120, 15, True, {VehicleType(0), VehicleType(3)})
-        self.add_edge(self.zones[0], self.zones[4], 110, 12, True, {VehicleType(1), VehicleType(2), VehicleType(3)})
-        self.add_edge(self.zones[4], self.zones[2], 170, 9, True, {VehicleType(0), VehicleType(1)})
-        self.add_edge(self.zones[4], self.zones[5], 190, 7, True, {VehicleType(2), VehicleType(3)})
-        self.add_edge(self.zones[4], self.zones[3], 130, 10, True, {VehicleType(0), VehicleType(1)})
-        self.add_edge(self.zones[1], self.zones[3], 120, 11, False, {VehicleType(2), VehicleType(3)})
-        self.add_edge(self.zones[1], self.zones[4], 100, 9, True, {VehicleType(0), VehicleType(1)})
-        self.add_edge(self.zones[6], self.zones[4], 90, 8, True, {VehicleType(2), VehicleType(3)})
-        self.add_edge(self.zones[6], self.zones[5], 95, 7, True, {VehicleType(0), VehicleType(1)})
-        self.add_edge(self.zones[6], self.zones[2], 125, 20, False, {VehicleType(2), VehicleType(3)})
-        #self.add_heuristic(self.zones[0], self.zones[0].get_severity()) # heuristica é a gravidade
-        #self.add_heuristic(self.zones[1], self.zones[1].get_severity())
-        #self.add_heuristic(self.zones[2], self.zones[2].get_severity())
-
+"""
 # TODO: Implement the IRLGraph class
 # attention, in this class we would need to change the "draw_map" method to use the osmnx library
 class IRLGraph(Graph):
@@ -119,3 +124,4 @@ class IRLGraph(Graph):
         # for each edge in the graph_obj (location) add to the edges
         for edge in self.graph_obj.edges:
             self.add_edge(self.zones[edge[0]], self.zones[edge[1]], 100, 10, True)
+"""

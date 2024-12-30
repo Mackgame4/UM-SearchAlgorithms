@@ -158,14 +158,12 @@ class Graph:
                 return
             for node in self.nodes:
                 zone_name = node.get_name()
-                zone_severity = node.get_severity()
-                zone_population = node.get_population()
                 zone_country = world[world['name'] == zone_name]
-                zone_ttl = node.get_ttl()
+                zone_heuristic = self.get_heuristic(zone_name)
                 if not zone_country.empty:
                     geometry = zone_country.geometry.iloc[0]
                     if geometry.contains(Point(event.xdata, event.ydata)):
-                        ax.set_title(f"Zone: {zone_name}\nPopulation: {zone_population}\nSeverity: {zone_severity}\nTTL: {zone_ttl}]")
+                        ax.set_title(f"Zone: {zone_name}\nPopulation: {node.get_population()}\nSeverity: {node.get_severity()}\nTTL: {node.get_ttl()}\nCamp: {node.is_camp()}\nHeuristic: {zone_heuristic}")
                         fig.canvas.draw_idle()
                         break
                     else:
@@ -174,7 +172,7 @@ class Graph:
         fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)
         # Add the legend
         plt.title("Map of Zones")
-        plt.subplots_adjust(left=0.04, right=1, top=0.86, bottom=0.05)
+        plt.subplots_adjust(left=0.04, right=1, top=0.83, bottom=0.05)
         plt.axis('equal')
         ax.set_aspect('auto')
         ax.plot([], [], 'k-', label='Road (Fuelt Cost, Permitted Vehicles)')

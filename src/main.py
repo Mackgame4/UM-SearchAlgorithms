@@ -1,6 +1,6 @@
 import sys
 from colorama import Fore
-from example_graph import FixedGraph, DynamicGraph, IRLGraph
+from example_graph import FixedGraph, DynamicGraph
 from classes.graph import Graph
 from utils.notify import notify
 from utils.menu import Menu
@@ -10,7 +10,7 @@ def run_main():
     main_menu = Menu("Selecione o tipo de grafo que deseja utilizar:")
     main_menu.add_entry("Fixed Graph", lambda: (run_menu(["", "test"]), main_menu.close()))
     main_menu.add_entry("Dynamic Graph", lambda: (run_menu(["", "run_dynamic"]), main_menu.close()))
-    main_menu.add_entry("IRL Graph", lambda: (run_menu(["", "run_irl"]), main_menu.close()))
+    #main_menu.add_entry("IRL Graph", lambda: (run_menu(["", "run_irl"]), main_menu.close()))
     main_menu.default_exit(exit_program)
     main_menu.show()
 
@@ -19,12 +19,9 @@ def run_menu(args: list):
     if args[1] == "test": # "make args='test'"
         notify("info", "Running with fixed graph")
         graph = FixedGraph()
-    elif args[1] == "run_dynamic": # "make args='run_dynamic'"
+    elif args[1] == "run": # "make args='run'"
         notify("info", "Running with dynamic graph")
         graph = DynamicGraph()
-    elif args[1] == "run_irl": # "make args='run_irl'"
-        notify("info", "Running with IRL graph")
-        graph = IRLGraph()
     else:
         notify("warning", "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]")
     graph_menu = Menu("Selecione uma opção:")
