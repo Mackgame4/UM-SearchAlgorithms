@@ -88,7 +88,7 @@ class Graph:
 
     def print_nodes(self):
         for node in self.nodes:
-            print(node.get_name(), node.get_population(), node.get_severity(), node.get_ttl(), node.is_camp())
+            print("Zone:", node.get_name(), node.get_population(), node.get_severity(), node.get_ttl(), node.is_camp())
 
     def print_edges(self):
         for node in self.nodes:
@@ -104,10 +104,83 @@ class Graph:
             g.add_node(node_name)
             for (adjacente, (travel_time, fuel_cost, good_conditions, vehicles)) in self.graph[node_name]:
                 g.add_edge(node_name, adjacente, travel_time=travel_time, fuel_cost=fuel_cost, good_conditions=good_conditions, vehicles=vehicles)
-        pos = nx.spring_layout(g, seed=39)
+        pos = nx.spring_layout(g, seed=39) # Seed for reproducibility of the graph layout
         plt.figure(figsize=(12, 8))
+        plt.subplots_adjust(left=0, right=1, top=0.95, bottom=0) # Make it full screen without margins but keep room for the title
         nx.draw_networkx(g, pos, with_labels=True, font_weight='bold', node_size=800, node_color='skyblue')
         labels = {(u, v): f"({d['travel_time']}, {d['fuel_cost']}, {d['good_conditions']}, {d['vehicles']})" for u, v, d in g.edges(data=True)}
         nx.draw_networkx_edge_labels(g, pos, edge_labels=labels)
         plt.title("Graph of Zones")
+        plt.show()
+
+    def draw_map(self):
+        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        places = [node.get_name() for node in self.nodes]
+        selected_countries = world[world['name'].isin(places)] # Filter only the countries in the graph
+        fig, ax = plt.subplots(figsize=(12, 8))
+        selected_countries.boundary.plot(ax=ax, color='lightgrey') # Draw the boundaries of the countries
+        # Paint the countries according to the severity of the zones
+        max_severity = max([node.get_severity() for node in self.nodes])
+        for node in self.nodes:
+            zone_severity = node.get_severity()
+            if zone_severity > 0:
+                alpha_value = zone_severity / max_severity
+                selected_countries[selected_countries['name'] == node.get_name()].plot(ax=ax, color='darkred', alpha=alpha_value)
+        # Paint the camp country in blue
+        camp_country = None
+        for node in self.nodes:
+            if node.is_camp():
+                camp_country = node.get_name()
+                break
+        if camp_country:
+            selected_countries[selected_countries['name'] == camp_country].plot(ax=ax, color='blue')
+        # Add the name of the countries
+        for _, row in selected_countries.iterrows():
+            ax.text(row.geometry.centroid.x, row.geometry.centroid.y, row['name'], fontsize=8)
+        # Draw the roads between the countries
+        max_travel_time = max([travel_time for node in self.nodes for (_, (travel_time, _, _, _)) in self.graph[node.get_name()]])
+        for node in self.nodes:
+            node_name = node.get_name()
+            for (adjacente, (travel_time, fuel_cost, good_conditions, vehicles)) in self.graph[node_name]:
+                adjacente_country = world[world['name'] == adjacente]
+                node_centroid_x = selected_countries[selected_countries['name'] == node_name].geometry.centroid.x.values[0]
+                node_centroid_y = selected_countries[selected_countries['name'] == node_name].geometry.centroid.y.values[0]
+                adjacente_centroid_x = adjacente_country.geometry.centroid.x.values[0]
+                adjacente_centroid_y = adjacente_country.geometry.centroid.y.values[0]
+                line_color = 'k-' if good_conditions else 'r-'
+                permitted_vehicles = ', '.join([str(vehicle) for vehicle in vehicles])
+                road_label = f"({fuel_cost}, {permitted_vehicles})"
+                ax.plot([node_centroid_x, adjacente_centroid_x], [node_centroid_y, adjacente_centroid_y], line_color, linewidth=travel_time/max_travel_time*3)
+                ax.text((node_centroid_x + adjacente_centroid_x) / 2, ((node_centroid_y + adjacente_centroid_y) / 2) + 0.5, road_label, fontsize=12, color='black', fontweight='bold')
+        # Hovering over the countries to show the zone information
+        def on_plot_hover(event):
+            if event.xdata is None or event.ydata is None:
+                return
+            for node in self.nodes:
+                zone_name = node.get_name()
+                zone_severity = node.get_severity()
+                zone_population = node.get_population()
+                zone_country = world[world['name'] == zone_name]
+                zone_ttl = node.get_ttl()
+                if not zone_country.empty:
+                    geometry = zone_country.geometry.iloc[0]
+                    if geometry.contains(Point(event.xdata, event.ydata)):
+                        ax.set_title(f"Zone: {zone_name}\nPopulation: {zone_population}\nSeverity: {zone_severity}\nTTL: {zone_ttl}]")
+                        fig.canvas.draw_idle()
+                        break
+                    else:
+                        ax.set_title("Map of Zones")
+                        fig.canvas.draw_idle()
+        fig.canvas.mpl_connect('motion_notify_event', on_plot_hover)
+        # Add the legend
+        plt.title("Map of Zones")
+        plt.subplots_adjust(left=0.04, right=1, top=0.86, bottom=0.05)
+        plt.axis('equal')
+        ax.set_aspect('auto')
+        ax.plot([], [], 'k-', label='Road (Fuelt Cost, Permitted Vehicles)')
+        ax.plot([], [], 'r-', label='Bad Weather Conditions')
+        ax.plot([], [], 'k-', linewidth=4, label='Higher Travel Time')
+        ax.plot([], [], 'ro', label='Affected Zone')
+        ax.plot([], [], 'bo', label='Camp Base')
+        ax.legend()
         plt.show()
