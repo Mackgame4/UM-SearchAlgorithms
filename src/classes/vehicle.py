@@ -1,83 +1,98 @@
 class Vehicle:
-    def __init__(self, tipo=3):
-        self.tipos = {
-            0: "Drone",
-            1: "Helicoptero",
-            2: "Camiao",
-            3: "Carro",
-            4: "Moto"
-        }
-        self.tipo = tipo
-
-        # Definindo os parâmetros padrão para cada tipo de veículo
-        if tipo == 0:  # Drone
-            self.carga_max = 5  # kg
-            self.velocidade = 60  # km/h
-            self.autonomia = 150  # km
-            self.consumo = 0  # drones são elétricos, consumo não aplicável
-        elif tipo == 1:  # Helicóptero
-            self.carga_max = 1000  # kg
-            self.velocidade = 250  # km/h
-            self.autonomia = 600  # km
-            self.consumo = 2  # litros/km
-        elif tipo == 2:  # Caminhão
-            self.carga_max = 20000  # kg
-            self.velocidade = 80  # km/h
-            self.autonomia = 1000  # km
-            self.consumo = 0.8  # litros/km
-        elif tipo == 3:  # Carro
-            self.carga_max = 500  # kg
-            self.velocidade = 120  # km/h
-            self.autonomia = 700  # km
-            self.consumo = 0.5  # litros/km
-        elif tipo == 4:  # Moto
-            self.carga_max = 50  # kg
-            self.velocidade = 100  # km/h
-            self.autonomia = 300  # km
-            self.consumo = 0.2  # litros/km
-
-        # Variável para armazenar a carga atual
-        self.carga_atual = 0  # kg
+    def __init__(self, name: str, capacity: int=0, range: int=0, speed: int=1):
+        """
+        Representa um veículo.
+        :param name: Nome ou tipo do veículo
+        :param capacity: Capacidade máxima do veículo em kg
+        :param range: Autonomia do veículo em quilômetros
+        :param speed: Velocidade do veículo em km/h
+        """
+        self.name = name
+        self.capacity = capacity
+        self.range = range
+        self.speed = speed
 
     def __str__(self):
-        return f"{self.tipos[self.tipo]}"
-
+        return self.name
+    
     def __repr__(self):
-        return f"{self.tipos[self.tipo]}"
-
-    def __eq__(self, other):
-        return self.tipo == other.tipo
-
+        return self.name
+    
+    def __eq__(self, other: "Vehicle"):
+        return self.name == other.name
+    
     def __hash__(self):
-        return hash(self.tipo)
+        return hash(self.name)
+    
+    """ Getters """
+    def get_name(self):
+        return self.name
+    
+    def get_capacity(self):
+        return self.capacity
+    
+    def get_range(self):
+        return self.range
+    
+    def get_speed(self):
+        return self.speed
+    
+    """ Setters """
+    def set_name(self, name):
+        self.name = name
 
-    def get_tipo(self):
-        return self.tipo
+    def set_capacity(self, capacity):
+        self.capacity = capacity
 
-    def get_tipo_name(self):
-        return self.tipos[self.tipo]
+    def set_range(self, range):
+        self.range = range
 
-    def get_carga_max(self):
-        return self.carga_max
+    def set_speed(self, speed):
+        self.speed = speed
 
-    def get_carga_atual(self):
-        return self.carga_atual
+class VehicleType:
+    def __init__(self, type=0):
+        """
+        Representa um tipo de veículo.
+        :param type: Tipo de veículo
+        """
+        self.types = {
+            0: Vehicle("Carro", 300, 400, 120),
+            1: Vehicle("Moto", 100, 200, 80),
+            2: Vehicle("Caminhão", 1000, 800, 80),
+            3: Vehicle("Helicoptero", 500, 600, 200),
+            4: Vehicle("Drone", 100, 1000, 200)
+        }
+        self.type = type
+        
+    def __str__(self):
+        return self.types[self.type].get_name()
+    
+    def __repr__(self):
+        return self.types[self.type].get_name()
+    
+    def __eq__(self, other: "VehicleType"):
+        return self.types[self.type] == other.types[self.type]
+    
+    def __hash__(self):
+        return hash(self.types[self.type])
+    
+    """ Getters """
+    def get_type(self):
+        return self.type
 
-    def get_velocidade(self):
-        return self.velocidade
+    def get_vehicle(self):
+        return self.types[self.type]
+    
+    def get_vehicle_types(self):
+        return self.types
+    
+    """ Setters """
+    def set_type(self, type):
+        self.type = type
 
-    def get_autonomia(self):
-        return self.autonomia
+    def set_vehicle(self, vehicle):
+        self.types[self.type] = vehicle
 
-    def get_consumo(self):
-        return self.consumo
-
-    # Define a carga atual a ser transportada
-    def set_carga_atual(self, carga):
-        #if carga > self.carga_max:
-            #raise ValueError(f"A carga ({carga} kg) excede a capacidade máxima do veículo ({self.carga_max} kg).")
-        self.carga_atual = carga
-
-    # Retorna os tipos de veículos disponíveis com a carga_max > carga_atual
-    def get_possible_vehicles(self):
-        return [Vehicle(tipo=tipo) for tipo in self.tipos if Vehicle(tipo=tipo).get_carga_max() >= self.carga_atual]
+    def set_vehicle_types(self, types):
+        self.types = types

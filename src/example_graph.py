@@ -1,6 +1,6 @@
 from classes.zone import Zone
 from classes.graph import Graph
-from classes.vehicle import Vehicle
+from classes.vehicle import Vehicle, VehicleType
 import random
 import geopandas as gpd
 import osmnx as ox
@@ -76,30 +76,29 @@ class FixedGraph(Graph): # Inherit from Graph
     def example_graph(self):
         # Create nodes
         self.zones = {
-            0: Zone("Botswana", 100, 2, 700, {Vehicle(3), Vehicle(2), Vehicle(1), Vehicle(0)}), # Most affected zone
-            1: Zone("Namibia", 400, 1, 400, {Vehicle(3), Vehicle(2), Vehicle(0)}), # Affected zone
-            2: Zone("Zimbabwe", 300, 0, 600, {Vehicle(3), Vehicle(2), Vehicle(1)}),
-            3: Zone("Angola", 400, 0, 500, {Vehicle(3), Vehicle(2), Vehicle(0)}),
-            4: Zone("Zambia", 500, 0, 800, {Vehicle(3), Vehicle(2)}),
-            5: Zone("Tanzania", 600, 0, 900, {Vehicle(3), Vehicle(5)}),
-            6: Zone("Malawi", 700, 0, 1000, {Vehicle(3), Vehicle(4)})
+            0: Zone("Botswana", 100, 2, 700, False), # Most affected zone
+            1: Zone("Namibia", 400, 1, 400, False), # Affected zone
+            2: Zone("Zimbabwe", 300, 0, 600, False),
+            3: Zone("Angola", 400, 0, 500, True), # ONU base
+            4: Zone("Zambia", 500, 0, 800, False),
+            5: Zone("Tanzania", 600, 0, 900, False),
+            6: Zone("Malawi", 700, 0, 1000, False)
         }
-        self.set_camp(self.zones[5]) # ONU base
-        self.add_edge(self.zones[0], self.zones[1], 100, 10, True)
-        self.add_edge(self.zones[0], self.zones[2], 200, 8, True)
-        self.add_edge(self.zones[0], self.zones[3], 120, 15, True)
-        self.add_edge(self.zones[0], self.zones[4], 110, 12, True)
-        self.add_edge(self.zones[4], self.zones[2], 170, 9, True)
-        self.add_edge(self.zones[4], self.zones[5], 190, 7, True)
-        self.add_edge(self.zones[4], self.zones[3], 130, 10, True)
-        self.add_edge(self.zones[1], self.zones[3], 120, 11, False)
-        self.add_edge(self.zones[1], self.zones[4], 100, 9, True)
-        self.add_edge(self.zones[6], self.zones[4], 90, 8, True)
-        self.add_edge(self.zones[6], self.zones[5], 95, 7, True)
-        self.add_edge(self.zones[6], self.zones[2], 125, 20, False)
-        self.add_heuristic(self.zones[0], self.zones[0].get_severity()) # heuristica é a gravidade
-        self.add_heuristic(self.zones[1], self.zones[1].get_severity())
-        self.add_heuristic(self.zones[2], self.zones[2].get_severity())
+        self.add_edge(self.zones[0], self.zones[1], 100, 10, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[0], self.zones[2], 200, 8, True, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[0], self.zones[3], 120, 15, True, {VehicleType(0), VehicleType(3)})
+        self.add_edge(self.zones[0], self.zones[4], 110, 12, True, {VehicleType(1), VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[4], self.zones[2], 170, 9, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[4], self.zones[5], 190, 7, True, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[4], self.zones[3], 130, 10, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[1], self.zones[3], 120, 11, False, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[1], self.zones[4], 100, 9, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[6], self.zones[4], 90, 8, True, {VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[6], self.zones[5], 95, 7, True, {VehicleType(0), VehicleType(1)})
+        self.add_edge(self.zones[6], self.zones[2], 125, 20, False, {VehicleType(2), VehicleType(3)})
+        #self.add_heuristic(self.zones[0], self.zones[0].get_severity()) # heuristica é a gravidade
+        #self.add_heuristic(self.zones[1], self.zones[1].get_severity())
+        #self.add_heuristic(self.zones[2], self.zones[2].get_severity())
 
 # TODO: Implement the IRLGraph class
 # attention, in this class we would need to change the "draw_map" method to use the osmnx library

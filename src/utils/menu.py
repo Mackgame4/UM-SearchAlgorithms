@@ -1,12 +1,13 @@
 from colorama import Fore, Back
-from utils.notify import notify, clear
 from typing import Callable
 
-EXIT_TEXT = "Sair"
-BACK_TEXT = "Voltar"
-MAIN_COLOR = Fore.YELLOW
-OPTION_TEXT = "Escolha uma opcao: "
-INVALID_OPTION = "Opção inválida. Tente novamente."
+from utils.notify import notify, clear
+
+EXIT_TEXT: str = "Sair"
+BACK_TEXT: str = "Voltar"
+MAIN_COLOR: str = Fore.YELLOW
+OPTION_TEXT: str = "Escolha uma opcao: "
+INVALID_OPTION: str = "Opção inválida. Tente novamente."
 
 class Menu:
     def __init__(self, title: str="Menu", exit: bool=True) -> None:
