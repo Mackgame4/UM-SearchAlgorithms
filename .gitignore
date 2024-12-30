@@ -127,3 +127,6 @@ Thumbs.db
 # Cache files
 *.cache
 cache/
+
+# Docs
+docs/

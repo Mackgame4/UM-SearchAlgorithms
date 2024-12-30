@@ -29,6 +29,17 @@ run:
 clean:
 	@rm -rf __pycache__ src/__pycache__ src/*.pyc src/*/__pycache__ src/*/*.pyc
 
+.PHONY: docs # The default target is to build the docs
+
+pre-docs:
+	@pip install pdoc
+
+docs:
+	@python src/doc_generator.py
+
+docs-clean:
+	@rm -rf docs
+
 relatorio: relatorio-build
 
 relatorio-build:
