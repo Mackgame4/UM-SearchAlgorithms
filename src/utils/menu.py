@@ -1,5 +1,6 @@
-from colorama import Fore
-from utils.notify import notify, clear, press_key
+from colorama import Fore, Back
+from utils.notify import notify, clear
+from typing import Callable
 
 EXIT_TEXT = "Sair"
 BACK_TEXT = "Voltar"
@@ -8,44 +9,52 @@ OPTION_TEXT = "Escolha uma opcao: "
 INVALID_OPTION = "Opção inválida. Tente novamente."
 
 class Menu:
-    """
-    Initializes the Menu instance.
-    :param title: Title of the menu.
-    :param exit: Whether to include an exit option.
-    """
-    def __init__(self, title="Menu", exit=True):
+    def __init__(self, title: str="Menu", exit: bool=True) -> None:
+        """
+        Initializes the Menu instance.
+        :param title: Title of the menu.
+        :param exit: Whether to include an exit option.
+        """
         self.title = title
         self.entries = []
         self.exit = exit
         self.exit_func = lambda: None
         self.closed = False
 
-    """
-    Adds an entry to the menu.
-    :param text: Display text for the menu option.
-    :param func: Function to execute when the option is selected.
-    """
-    def add_entry(self, text, func):
+    def add_entry(self, text: str, func: Callable):
+        """
+        Adds an entry to the menu.
+        :param text: Display text for the menu option.
+        :param func: Function to execute when the option is selected.
+        """
         self.entries.append((text, func))
 
-    """
-    Adds an exit option to the menu.
-    """
-    def default_exit(self, func):
+    def default_exit(self, func: Callable):
+        """
+        Adds an exit option to the menu.
+        :param func: Function to execute when the exit option is selected.
+        """
         self.exit_func = func
         return func
-    
-    """
-    Closes the menu. (So it doesn't interfere with a newly opened menu)
-    """
+
     def close(self):
+        """
+        Closes the menu. (So it doesn't interfere with a newly opened menu)
+        """
         self.closed = True
         clear()
 
-    """
-    Displays the menu and handles user interaction.
-    """
+    @staticmethod
+    def press_key():
+        """
+        Waits for the user to press [ENTER] to continue.
+        """
+        input(Back.WHITE + Fore.BLACK + "Prima [ENTER] para continuar" + Fore.RESET + Back.RESET)
+
     def show(self):
+        """
+        Displays the menu and handles user interaction.
+        """
         while not self.closed:
             print(MAIN_COLOR + self.title + Fore.RESET)
             for i, (text, _) in enumerate(self.entries, start=1):
@@ -54,7 +63,6 @@ class Menu:
                 print(MAIN_COLOR + "0 - " + Fore.RESET + EXIT_TEXT)
             else:
                 print(MAIN_COLOR + "0 - " + Fore.RESET + BACK_TEXT)
-
             try:
                 choice = int(input(MAIN_COLOR + OPTION_TEXT + Fore.RESET))
                 if choice == 0:
@@ -66,10 +74,10 @@ class Menu:
                     except Exception as e:
                         # Handle the error gracefully without crashing the menu
                         notify("error", f"Erro: {str(e)}")
-                        press_key()  # Wait for the user to acknowledge the error
+                        self.press_key()  # Wait for the user to acknowledge the error
                         clear()
                     else:
-                        press_key()  # Wait for the user to press any key after the function is done
+                        self.press_key()  # Wait for the user to press any key after the function is done
                         clear()
                 else:
                     clear()

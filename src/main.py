@@ -1,9 +1,7 @@
 import sys
 from colorama import Fore
-from dynamic_graph import DynamicGraph
-from fixed_graph import FixedGraph
-from irl_graph import IRLGraph
-from classes.vehicle import Vehicle
+from example_graph import FixedGraph, DynamicGraph, IRLGraph
+from classes.graph import Graph
 from utils.notify import notify
 from utils.menu import Menu
 from classes.algorithms import procura_BFS, procura_DFS
@@ -16,7 +14,7 @@ def run_main():
     main_menu.default_exit(exit_program)
     main_menu.show()
 
-def run_menu(args):
+def run_menu(args: list):
     graph = None
     if args[1] == "test": # "make args='test'"
         notify("info", "Running with fixed graph")
@@ -40,7 +38,7 @@ def run_menu(args):
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 
-def resolve_with_dfs(graph):
+def resolve_with_dfs(graph: Graph):
     start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
     end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
     print("Resolver com DFS")
@@ -49,7 +47,7 @@ def resolve_with_dfs(graph):
     print(procura_DFS(start_node, end_node, path, visited, graph))
     # Angola -> Malawi ((['Angola', 'Botswana', 'Namibia', 'Zambia', 'Zimbabwe', 'Malawi'], 7730))
 
-def resolve_with_bfs(graph):
+def resolve_with_bfs(graph: Graph):
     start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
     end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
     #carga = int(input(Fore.YELLOW + "Digite a carga que será transportada (em kg): " + Fore.RESET))

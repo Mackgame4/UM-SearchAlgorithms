@@ -1,8 +1,14 @@
 from colorama import Fore, Back
 
-DEBUG = True
+# Whether to print debug messages
+DEBUG: bool = True
 
-def notify(type, message):
+"""
+Prints a message to the console with a colored background.
+:param type: Type of message (info, warning, error, success, debug, message).
+:param message: Message to print.
+"""
+def notify(type: str, message: str):
     if type == 'info':
         print(Back.BLUE + "[INFO]" + Back.RESET + " " + Fore.BLUE + message + Fore.RESET)
     elif type == 'warning':
@@ -19,8 +25,8 @@ def notify(type, message):
     else:
         print(message)
 
+"""
+Clears the console.
+"""
 def clear():
     print("\033c")  # clean the console
-
-def press_key():
-    input(Back.WHITE + Fore.BLACK + "Prima [ENTER] para continuar" + Fore.RESET + Back.RESET)
