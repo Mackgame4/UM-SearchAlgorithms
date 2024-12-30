@@ -75,22 +75,20 @@ class Graph:
         # Ensure the zones are added to the graph
         node1 = zone1.get_name()
         node2 = zone2.get_name()
-        n1 = Zone(node1)
-        n2 = Zone(node2)
-        if n1 not in self.nodes:
-            n1_id = len(self.nodes)
-            n1.set_id(n1_id)
-            self.nodes.append(n1)
+        if zone1 not in self.nodes:
+            self.nodes.append(zone1)
             self.graph[node1] = []
-        if n2 not in self.nodes:
-            n2_id = len(self.nodes)
-            n2.set_id(n2_id)
-            self.nodes.append(n2)
+        if zone2 not in self.nodes:
+            self.nodes.append(zone2)
             self.graph[node2] = []
         # Adding vehicles permitted for each edge
         self.graph[node1].append((node2, (travel_time, fuel_cost, good_conditions, vehicles)))
         if not self.directed:
             self.graph[node2].append((node1, (travel_time, fuel_cost, good_conditions, vehicles))) # Add edge in both directions (undirected graph)
+
+    def print_nodes(self):
+        for node in self.nodes:
+            print(node.get_name(), node.get_population(), node.get_severity(), node.get_ttl(), node.is_camp())
 
     def print_edges(self):
         for node in self.nodes:

@@ -29,7 +29,7 @@ def run_menu(args: list):
         notify("warning", "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]")
     graph_menu = Menu("Selecione uma opção:")
     graph_menu.add_entry("[Imprimir] Grafo", lambda: print(graph.graph))
-    graph_menu.add_entry("[Imprimir] Nodos", lambda: print(graph.nodes))
+    graph_menu.add_entry("[Imprimir] Nodos", lambda: graph.print_nodes())
     graph_menu.add_entry("[Imprimir] Arestas", lambda: graph.print_edges())
     graph_menu.add_entry("[Desenhar] Grafo", lambda: graph.draw_graph())
     graph_menu.add_entry("[Desenhar] Mapa", lambda: graph.draw_map())

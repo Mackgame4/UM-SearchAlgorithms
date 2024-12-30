@@ -1,15 +1,13 @@
 class Zone:
-    def __init__(self, name: str, id: int=-1, population: int=0, severity: int=0, ttl: int=0, camp: bool=False):
+    def __init__(self, name: str, population: int=0, severity: int=0, ttl: int=0, camp: bool=False):
         """
         Representa uma zona.
         :param name: Nome da zona.
-        :param id: Identificador da zona.
         :param population: População da zona.
         :param severity: Severidade da zona.
         :param ttl: Tempo de vida da zona (janela de tempo critica).
         :param camp: Zona de acampamento.
         """
-        self.id = id
         self.name = str(name) # Ensure name is a string
         self.population = population
         self.severity = severity
@@ -29,9 +27,6 @@ class Zone:
         return hash(self.name)
 
     """ Getters """
-    def get_id(self) -> int:
-        return self.id
-    
     def get_name(self) -> str:
         return self.name
     
@@ -48,9 +43,6 @@ class Zone:
         return self.camp
     
     """ Setters """
-    def set_id(self, id):
-        self.id = id
-
     def set_name(self, name):
         self.name = name
 
