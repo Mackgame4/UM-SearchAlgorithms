@@ -8,10 +8,10 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning) # Hide FutureWarning messages from geopandas
 
 class FixedGraph(Graph): # Inherit from Graph
-    """
-    FixedGraph extends graph and creates a fixed graph with fixed zones and edges (defined manually).
-    """
     def __init__(self):
+        """
+        FixedGraph extends graph and creates a fixed graph with fixed zones and edges (defined manually).
+        """
         super().__init__() # Initialize the parent Graph class
         self.example_graph() # Set up the example graph
 
