@@ -20,7 +20,7 @@ class Vehicle:
     
     def __eq__(self, other: "Vehicle"):
         return self.name == other.name
-    
+   
     def __hash__(self):
         return hash(self.name)
     
@@ -53,8 +53,8 @@ class Vehicle:
 VEHICLE_TYPES: dict[int, Vehicle] = {
     0: Vehicle("Carro", 300, 400, 120),
     1: Vehicle("Moto", 100, 200, 80),
-    2: Vehicle("Caminhão", 1000, 800, 80),
-    3: Vehicle("Helicoptero", 500, 600, 200),
+    2: Vehicle("Camião", 1000, 49, 80),
+    3: Vehicle("Helicóptero", 500, 600, 200),
     4: Vehicle("Drone", 600, 1000, 200)
 }
 

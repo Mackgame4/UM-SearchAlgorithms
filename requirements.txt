@@ -1,5 +1,5 @@
 colorama==0.4.6
-geopandas==0.14.4
+geopandas>=1.0
 matplotlib==3.10.0
 networkx==3.3
 osmnx==2.0.0

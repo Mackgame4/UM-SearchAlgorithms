@@ -115,7 +115,7 @@ class Graph:
         :param node2: Node 2.
         :return: Cost of the edge between the two nodes.
         """
-        # o custo será o tempo de viagem entre os dois nodos a dividir pelo custo do combustível e se não houver boas condições o tesmpo é 1.5 vezes maior
+        # o custo será o tempo de viagem entre os dois nodos a dividir pelo custo do combustível e se não houver boas condições o tempo é 1.5 vezes maior
         formula = lambda travel_time, fuel_cost, good_conditions: travel_time / fuel_cost if good_conditions else travel_time / fuel_cost * 1.5
         costAux = math.inf
         node_edges = self.graph[node1] # lista de arestas para aquele nodo

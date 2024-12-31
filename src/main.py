@@ -62,6 +62,8 @@ def resolve_with_dfs(graph: Graph):
     res = procura_DFS(start_node, end_nodes, graph, path, visited, carga)
     if res != None:
         notify("info", f"Resultado: {res}") # Exemplo usando o grafo fixo: Angola -> Malawi ((['Angola', 'Botswana', 'Namibia', 'Zambia', 'Zimbabwe', 'Malawi'], 7730))
+    else: 
+        notify("info", "Não foi possível chegar às zonas afetadas dadas as características dos caminhos existentes e os veículos à disposição.")
 
 def resolve_with_bfs(graph: Graph):
     start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
