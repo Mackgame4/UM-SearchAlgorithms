@@ -27,7 +27,10 @@ class Graph:
         return self.nodes
     
     def get_node(self, node: str) -> Zone:
-        return Zone(node)
+        for n in self.nodes:
+            if n.get_name() == node:
+                return n
+        return None
     
     def get_heuristics(self) -> dict[str, int]:
         return self.heuristics

@@ -55,8 +55,17 @@ VEHICLE_TYPES: dict[int, Vehicle] = {
     1: Vehicle("Moto", 100, 200, 80),
     2: Vehicle("Caminhão", 1000, 800, 80),
     3: Vehicle("Helicoptero", 500, 600, 200),
-    4: Vehicle("Drone", 100, 1000, 200)
+    4: Vehicle("Drone", 600, 1000, 200)
 }
+
+def get_fastest_capable_vehicle(capacity: int) -> Vehicle:
+    # get the fastest vehicle that can carry the given capacity
+    vehicleList = list(VEHICLE_TYPES.values())
+    vehicleList.sort(key=lambda x: x.get_speed(), reverse=True)
+    for vehicle in vehicleList:
+        if vehicle.get_capacity() >= capacity:
+            return vehicle
+    return None
 
 class VehicleType:
     def __init__(self, type: int=0):
@@ -91,9 +100,6 @@ class VehicleType:
     
     def get_possible_vehicles(self) -> list[Vehicle]:
         return self.types.values()
-
-    def get_n_vehicle_types(self) -> int:
-        return len(self.types)
 
     """ Setters """
     def set_type(self, type):

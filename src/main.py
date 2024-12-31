@@ -5,6 +5,7 @@ from classes.graph import Graph
 from utils.notify import notify
 from utils.menu import Menu
 from classes.algorithms import procura_BFS, procura_DFS
+from classes.vehicle import VEHICLE_TYPES
 
 def run_main():
     main_menu = Menu("Selecione o tipo de grafo que deseja utilizar:")
@@ -47,10 +48,18 @@ def resolve_with_dfs(graph: Graph):
     #end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
     start_node = graph.get_camp_node()
     end_nodes = graph.get_affected_nodes()
-    notify("debug", f"A resolver com DFS de {start_node} para {end_nodes}")
+    carga = int(input(Fore.YELLOW + "Digite a carga total que será transportada (em kg): " + Fore.RESET))
+    if carga <= 0:
+        notify("error", "Carga inválida. A carga deve ser maior que zero.")
+        return
+    max_vehicle_cap = max([v.get_capacity() for v in VEHICLE_TYPES.values()])
+    if carga > max_vehicle_cap:
+        notify("error", f"Carga inválida. A carga máxima suportada é de {max_vehicle_cap} kg.")
+        return
+    notify("debug", f"A resolver com DFS de {start_node} para {end_nodes} com carga de {carga} kg")
     path = []
     visited = set()
-    res = procura_DFS(start_node, end_nodes, graph, path, visited)
+    res = procura_DFS(start_node, end_nodes, graph, path, visited, carga)
     if res != None:
         notify("info", f"Resultado: {res}") # Exemplo usando o grafo fixo: Angola -> Malawi ((['Angola', 'Botswana', 'Namibia', 'Zambia', 'Zimbabwe', 'Malawi'], 7730))
 
