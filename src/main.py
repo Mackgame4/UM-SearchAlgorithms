@@ -55,7 +55,7 @@ def resolve_with_dfs(graph: Graph):
     max_vehicle_cap = max([v.get_capacity() for v in VEHICLE_TYPES.values()])
     if carga > max_vehicle_cap:
         notify("error", f"Carga inválida. A carga máxima suportada é de {max_vehicle_cap} kg.")
-        return
+
     notify("debug", f"A resolver com DFS de {start_node} para {end_nodes} com carga de {carga} kg")
     path = []
     visited = set()
@@ -68,13 +68,22 @@ def resolve_with_dfs(graph: Graph):
 def resolve_with_bfs(graph: Graph):
     start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
     end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
+
     #carga = int(input(Fore.YELLOW + "Digite a carga que será transportada (em kg): " + Fore.RESET))
     #vehicle = Vehicle()
     #vehicle.set_carga_atual(carga)
     #print(vehicle.get_possible_vehicles())
     #graph.bfs(start_node, end_node, vehicle)
-    print("Resolver com BFS")
-    print(procura_BFS(start_node, end_node, graph))
+    carga = int(input(Fore.YELLOW + "Digite a carga total que será transportada (em kg): " + Fore.RESET))
+    if carga <= 0:
+        notify("error", "Carga inválida. A carga deve ser maior que zero.")
+        return
+    max_vehicle_cap = max([v.get_capacity() for v in VEHICLE_TYPES.values()])
+    if carga > max_vehicle_cap:
+        notify("error", f"Carga inválida. A carga máxima suportada é de {max_vehicle_cap} kg.")
+
+    notify("debug", f"A resolver com BFS de {start_node} para {end_node} com carga de {carga} kg")
+    print(procura_BFS(start_node, [end_node], graph, carga))
 
 def main():
     args = sys.argv

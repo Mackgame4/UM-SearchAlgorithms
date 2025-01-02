@@ -1,8 +1,8 @@
 from classes.graph import Graph
-from queue import Queue
 from utils.notify import notify
 from classes.vehicle import Vehicle, get_fastest_capable_vehicle
 import copy
+from collections import deque
 
 def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, path: list = [], visited: set[str] = set(), peso: int = 0, vehicle: Vehicle = None):
     """
@@ -29,7 +29,7 @@ def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, path: list 
     if start_node in end_nodes_copy:
         custo_total = graph.calcula_custo(path)
         return (path, custo_total, vehicle)
-
+    
     for (adjacente, edge_data) in graph.graph[start_node]:
         travel_time, fuel_cost, _, vehicles = edge_data
 
@@ -78,39 +78,82 @@ def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, path: list 
     path.pop()
     return None
 
-def procura_BFS(start, end, graph=Graph()):
-        # definir nodos visitados para evitar ciclos
-        visited = set()
-        fila = Queue()
-        custo = 0
-        # adicionar o nodo inicial à fila e aos visitados
-        fila.put(start)
-        visited.add(start)
+def procura_BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0):
+    """
+    Busca em largura modificada (BFS) com TTL e troca de veículo baseado no peso.
+    :param start_node: Nodo inicial.
+    :param end_nodes: Lista de nodos finais.
+    :param graph: Grafo.
+    :param peso: Peso a ser transportado.
+    :return: Tupla (caminho, custo_total, veículo) se encontrar, caso contrário, None.
+    """
+    # Se não houver mais zonas finais acessíveis
+    if not end_nodes:
+        return None
 
-        parent = dict()
-        parent[start] = None
+    # Se o nodo incial for uma zona final
+    if start_node in end_nodes:
+        return ([start_node], 0, current_vehicle)
+    
+    # Para cada estado/path está associado o valor de combustível para o percorrer
+    fuel_needed = 0 
+    # Criar uma lista de (end_zone, TTL) para cada path possível a partir ds end_nodes
+    end_nodes_ttl = [(end_node, graph.get_node(end_node).get_ttl()) for end_node in end_nodes]
 
-        path_found = False
-        while not fila.empty() and path_found == False:
-            nodo_atual = fila.get()
-            if nodo_atual == end:
-                path_found = True
-            else:
-                for (adjacente, peso) in graph.graph[nodo_atual]:
-                    if adjacente not in visited:
-                        fila.put(adjacente)
-                        parent[adjacente] = nodo_atual
-                        visited.add(adjacente)
+    # Fila de exploração: (current_node, current_path, current_vehicle, end_nodes_ttl_copy, fuel_needed)
+    # Cada elemento da fila é um possível estado 
+    queue = deque([(start_node, [start_node], None, copy.deepcopy(end_nodes_ttl), fuel_needed)])
+    visited = set()  # Usado para evitar revisitar zonas
 
-        # reconstruir o caminho
+    
+    # Adição da zona de partida à lista de visitadas
+    visited.add(start_node)
+    while queue:
+        # Pega no primeiro elemento da fila
+        current_node, current_path, current_vehicle, current_end_nodes_ttl, current_path_fuel_needed = queue.popleft()
 
-        path = []
-        if path_found:
-            path.append(end)
-            while parent[end] is not None:
-                path.append(parent[end])
-                end = parent[end]
-            path.reverse()
-            # funçao calcula custo caminho
-            custo = graph.calcula_custo(path)
-        return (path, custo)
+
+        print(f"A analisar os vizinhos de {current_node}")
+        # Explorar nós adjacentes
+        for (adjacente, edge_data) in graph.graph[current_node]:
+            travel_time, fuel_cost, _, vehicles = edge_data
+
+            # Verificar se o nodo adjacente não foi visitado
+            if adjacente not in visited:
+                print(f"Testando rota {current_path+[adjacente]}")
+                # Encontrar um veículo adequado para transportar o peso
+                current_vehicle = get_fastest_capable_vehicle(peso)
+
+                # Validar combustível
+                if current_vehicle is not None:
+                    # Se o veículo tiver autonomia para percorrer este potencial path
+                    if current_vehicle.get_range() < current_path_fuel_needed + fuel_cost:
+                        notify("warning", f"Combustível seria insuficiente por esta rota para chegar a {adjacente}: {current_vehicle.get_range()- (current_path_fuel_needed + fuel_cost)}")
+                        continue
+                    print(f"Veículo {current_vehicle.get_name()} ficaria com {current_vehicle.get_range()- (current_path_fuel_needed + fuel_cost)} de combustível")
+
+                # Se não houver veículo adequado, continuar
+                if current_vehicle is None:
+                    continue
+                
+                # Atualizar TTL das zonas finais
+                new_end_nodes_ttl = []
+                for end_zone, ttl in current_end_nodes_ttl:
+                    new_ttl = ttl - travel_time
+                    if new_ttl > 0:
+                        new_end_nodes_ttl.append((end_zone, new_ttl))
+                        print(f"Zona {end_zone} ficaria com TTL {new_ttl}")
+                    else:
+                        notify("warning", f"Zona {end_zone} removida pois excederia TTL para esta rota")
+
+
+                 # Se o nodo adjacente for uma zona final
+                if any(adjacente == end_zone for end_zone, _ in new_end_nodes_ttl):
+                    custo_total = graph.calcula_custo(current_path + [adjacente])
+                    return (current_path+[adjacente], custo_total, current_vehicle)
+                
+                # Adicionar o nó adjacente aos visitados e à fila com caminho atualizado
+                visited.add(adjacente)
+                queue.append((adjacente, current_path + [adjacente], current_vehicle, new_end_nodes_ttl, current_path_fuel_needed+fuel_cost))
+
+    return None  # Se não encontrar nenhum caminho
