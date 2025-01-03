@@ -155,6 +155,17 @@ class Graph:
             if node.get_severity() > 0:
                 affected_nodes.append(node.get_name())
         return affected_nodes
+    
+    def get_neighbours(self, node: str) -> list:
+        """
+        Get the neighbours of a node.
+        :param node: Name of the node.
+        :return: List of neighbours of the node.
+        """
+        neighbours = []
+        for (adjacente, (travel_time, fuel_cost, good_conditions, vehicles)) in self.graph[node]:
+            neighbours.append((adjacente, travel_time, fuel_cost, good_conditions, vehicles))
+        return neighbours
 
     def draw_graph(self):
         g = nx.Graph()
