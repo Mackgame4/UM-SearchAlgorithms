@@ -267,6 +267,8 @@ def Greedy(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0):
     parents = {}
     parents[start_node] = start_node
     old_vehicle = copy.deepcopy(get_start_capable_vehicle(peso))
+    if old_vehicle is None:
+        return None
     while len(open_list) > 0:
         n = None
         # Encontra o nodo com a menor heurística
@@ -288,36 +290,37 @@ def Greedy(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0):
         for (m, travel_time, fuel_cost, _, vehicleTypes) in graph.get_neighbours(n):
             # Se o nodo corrente não está na open nem na closed list, adicioná-lo à open_list
             if m not in open_list and m not in closed_list:
+                # Other logic
+                # Update the TTL of all final zones for each step
+                for end_node_name in end_nodes[:]:
+                    end_zone = graph.get_node(end_node_name)
+                    end_zone.set_ttl(end_zone.get_ttl() - travel_time)
+                    if end_zone.get_ttl() <= 0:
+                        notify("warning", f"Zona {end_node_name} removida por TTL")
+                        end_nodes.remove(end_node_name)
+                # Verificar se o veículo tem combustível suficiente para a próxima viagem
+                vehicle_list = [v.get_vehicle() for v in vehicleTypes]
+                new_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
+                if new_vehicle is None:
+                    continue
+                # Add the vehicle change notification
+                if new_vehicle is not None:
+                    if new_vehicle != old_vehicle:
+                        if old_vehicle is not None:
+                            notify("warning", f"Troca de veículo de {old_vehicle.get_name()} para {new_vehicle.get_name()} em {n}")
+                        old_vehicle = new_vehicle
+                if new_vehicle.get_range() < fuel_cost:
+                    # Notificar que o veículo precisa de reabastecimento
+                    notify("warning", f"Combustível insuficiente para ir de {n} para {m}, reabasteça!")
+                    continue
+                # Deduzir o combustível para a próxima viagem
+                new_vehicle.set_range(new_vehicle.get_range() - fuel_cost)
+                # Adicionar m à open_list
                 open_list.add(m)
                 parents[m] = n
         # Remover n da open_list e adicionar à closed_list, pois todos os seus vizinhos foram inspecionados
         open_list.remove(n)
         closed_list.add(n)
-        # Other logic
-        # Update the TTL of all final zones for each step
-        for end_node_name in end_nodes[:]:
-            end_zone = graph.get_node(end_node_name)
-            end_zone.set_ttl(end_zone.get_ttl() - travel_time)
-            if end_zone.get_ttl() <= 0:
-                notify("warning", f"Zona {end_node_name} removida por TTL")
-                end_nodes.remove(end_node_name)
-        # Verificar se o veículo tem combustível suficiente para a próxima viagem
-        vehicle_list = [v.get_vehicle() for v in vehicleTypes]
-        new_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
-        if new_vehicle is None:
-            continue
-        # Add the vehicle change notification
-        if new_vehicle is not None:
-            if new_vehicle != old_vehicle:
-                if old_vehicle is not None:
-                    notify("warning", f"Troca de veículo de {old_vehicle.get_name()} para {new_vehicle.get_name()} em {n}")
-                old_vehicle = new_vehicle
-        if new_vehicle.get_range() < fuel_cost:
-            # Notificar que o veículo precisa de reabastecimento
-            notify("warning", f"Combustível insuficiente para ir de {n} para {m}, reabasteça!")
-            continue
-        # Deduzir o combustível para a próxima viagem
-        new_vehicle.set_range(new_vehicle.get_range() - fuel_cost)
     return None
 
 def UniformCost(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0):  
@@ -340,7 +343,6 @@ def UniformCost(start_node: str, end_nodes: list[str], graph: Graph, peso: int =
     
     old_vehicle = copy.deepcopy(get_start_capable_vehicle(peso))  # Initialize the starting vehicle
 
-    print(old_vehicle)
     if old_vehicle is None:
         return None # if no vehicle can carry the load at the start, we will assume the load is impossible for the entire path
     
@@ -352,8 +354,16 @@ def UniformCost(start_node: str, end_nodes: list[str], graph: Graph, peso: int =
             path = []
             node = current_node
             while node is not None:
-                path.append(node) # TODO: fix this, only add if the vehicle going there is not None and other rules (also check it for other ones)
-                node = parents[node]
+                if new_vehicle is not None and new_vehicle.get_range() >= fuel_cost:
+                    # Check if the vehicle has enough fuel
+                    if new_vehicle.get_range() < fuel_cost:
+                        notify("warning", f"Combustível insuficiente para viajar de {current_node} para {adjacente}, reabasteça!")
+                        continue # Skip this path if fuel is insufficient
+                    if new_vehicle != old_vehicle:
+                        if old_vehicle is not None:
+                            notify("warning", f"Troca de veículo de {old_vehicle.get_name()} para {new_vehicle.get_name()} em {adjacente}")
+                    path.append(node)
+                    node = parents[node]
             path.reverse()
             total_cost = current_cost
             return (path, total_cost, vehicle)
@@ -371,26 +381,15 @@ def UniformCost(start_node: str, end_nodes: list[str], graph: Graph, peso: int =
                 # Find the most appropriate vehicle for this edge
                 vehicle_list = [v.get_vehicle() for v in vehicleTypes]
                 new_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
-                print(new_vehicle)
-                print(adjacente)
-                if new_vehicle is not None:
-                    print(new_vehicle.get_range())
                 
                 if new_vehicle is None:
                     continue  # If no vehicle can carry the load, skip
-                
-                # Check if the vehicle has enough fuel
-                if new_vehicle.get_range() < fuel_cost:
-                    notify("warning", f"Combustível insuficiente para viajar de {current_node} para {adjacente}, reabasteça!")
-                    continue  # Skip this path if fuel is insufficient
                 
                 # Deduct the fuel for this journey
                 new_vehicle.set_range(new_vehicle.get_range() - fuel_cost)
                 
                 # Notify if the vehicle changed
                 if new_vehicle != old_vehicle and new_vehicle is not None:
-                    if old_vehicle is not None:
-                        notify("warning", f"Troca de veículo de {old_vehicle.get_name()} para {new_vehicle.get_name()} em {adjacente}")
                     old_vehicle = new_vehicle
 
                 # Add to the open list

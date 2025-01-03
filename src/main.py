@@ -23,7 +23,7 @@ def run_menu(args: list):
         notify("info", "Running with fixed graph")
         graph = FixedGraph()
     elif args[1] == "run": # "make args='run'"
-        notify("info", "Running with dynamic graph")
+        notify("info", "Running with dynamic graph") # TODO: Implement the IRLGraph class (a graph where the zones and streats are fixed but travel times and meteorologic conditions change)
         graph = DynamicGraph()
     else:
         notify("warning", "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]")
