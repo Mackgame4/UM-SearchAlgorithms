@@ -4,6 +4,7 @@ from classes.vehicle import Vehicle, VehicleType, get_fastest_capable_vehicle, g
 import copy
 from collections import deque
 from queue import Queue
+from heapq import heappush, heappop
 
 def DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0, path: list = None, visited: set = None, vehicle: Vehicle = None):
     """
@@ -34,7 +35,7 @@ def DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0, path
         travel_time, fuel_cost, _, vehicleTypes = edge_data
         # Check if the adjacent node hasn't been visited
         if adjacente not in visited:
-            notify("debug", f"Visitando {adjacente}")
+            notify("debug", f"Testando rota {path+[adjacente]}")
             # Find an appropriate vehicle that can carry the load on this edge, which has higher speed and can still carry the weight
             vehicle_list = [v.get_vehicle() for v in vehicleTypes]
             current_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
@@ -47,9 +48,10 @@ def DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0, path
                     notify("warning", f"Combustível seria insuficiente para chegar a {adjacente}, reabasteça {abs(current_vehicle.get_range()-fuel_cost)} de combustível")
                     continue
                 current_vehicle.set_range(current_vehicle.get_range() - fuel_cost)
-                notify("debug", f"Veículo {current_vehicle.get_name()} com {current_vehicle.get_range()} de combustível")
+                notify("debug", f"Veículo {current_vehicle.get_name()} com {current_vehicle.get_range()} de combustível ao chegar a {adjacente}")
             # If no suitable vehicle, continue
             if current_vehicle is None:
+                notify("debug", f"Não há nenhum veículo capaz de realizar esta rota, {path+[adjacente]}, com esta carga: {peso}")
                 continue
             # For each step, update TTL of all final zones
             for end_node_name in end_nodes[:]:  # Iterate over the copy, not the original
@@ -84,7 +86,7 @@ def BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0):
     :param peso: Peso a ser transportado.
     :return: Tupla (caminho, custo_total, veículo) se encontrar, caso contrário, None.
     """
-    # Se não houver mais zonas finais acessíveis
+    # Se não houver zonas finais acessíveis
     if not end_nodes:
         return None
 
@@ -107,10 +109,10 @@ def BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0):
     visited.add(start_node)
     while queue:
         # Pega no primeiro elemento da fila
-        current_node, current_path, current_vehicle, current_end_nodes_ttl, current_path_fuel_needed = queue.popleft()
+        current_node, current_path, vehicle, current_end_nodes_ttl, current_path_fuel_needed = queue.popleft()
 
 
-        print(f"A analisar os vizinhos de {current_node}")
+        notify("debug", f"A analizar os vizinhos de {current_node}")
         # Explorar nós adjacentes
         for (adjacente, edge_data) in graph.graph[current_node]:
             travel_time, fuel_cost, _, vehicles = edge_data
@@ -118,19 +120,24 @@ def BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0):
             # Verificar se o nodo adjacente não foi visitado
             if adjacente not in visited:
                 notify("debug", f"Testando rota {current_path+[adjacente]}")
-                # Encontrar um veículo adequado para transportar o peso
-                current_vehicle = get_fastest_capable_vehicle(peso)
+
+                # Encontrar um veículo que possa atravessar esta aresta com esta carga e que seja rápido mas também adequado à carga qeu irá transportar
+                vehicle_list = [v.get_vehicle() for v in vehicles]
+                current_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
 
                 # Validar combustível
                 if current_vehicle is not None:
+                    if vehicle is not None and current_vehicle != vehicle:
+                        notify("warning", f"Troca de veículo de {vehicle.get_name()} para {current_vehicle.get_name()} em {adjacente}")
                     # Se o veículo tiver autonomia para percorrer este potencial path
                     if current_vehicle.get_range() < current_path_fuel_needed + fuel_cost:
-                        notify("warning", f"Combustível seria insuficiente por esta rota para chegar a {adjacente}: {current_vehicle.get_range()- (current_path_fuel_needed + fuel_cost)}")
+                        notify("warning", f"Combustível seria insuficiente por esta rota para chegar a {adjacente}, reabasteça {abs(current_vehicle.get_range() - (current_path_fuel_needed + fuel_cost))}")
                         continue
-                    notify("debug", f"Veículo {current_vehicle.get_name()} ficaria com {current_vehicle.get_range()- (current_path_fuel_needed + fuel_cost)} de combustível")
+                    notify("debug", f"Veículo {current_vehicle.get_name()} ficaria com {current_vehicle.get_range() - (current_path_fuel_needed + fuel_cost)} de combustível ao chegar a {adjacente}")
 
                 # Se não houver veículo adequado, continuar
                 if current_vehicle is None:
+                    notify("debug", f"Não há nenhum veículo capaz de realizar esta rota, {current_path+[adjacente]}, com esta carga: {peso}")
                     continue
                 
                 # Atualizar TTL das zonas finais
@@ -155,8 +162,104 @@ def BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0):
 
     return None  # Se não encontrar nenhum caminho
 
-def AStar():
-    pass
+
+def AStar(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0):
+    """
+    Busca A* modificada com TTL e troca de veículo baseado no peso.
+    :param start_node: Nodo inicial.
+    :param end_nodes: Lista de nodos finais.
+    :param graph: Grafo.
+    :param peso: Peso a ser transportado.
+    :return: Tupla (caminho, custo_total, veículo) se encontrar, caso contrário, None.
+    """
+    # Se não houver zonas finais acessíveis
+    if not end_nodes:
+        return None
+
+    # Se o nodo incial for uma zona final
+    if start_node in end_nodes:
+        return ([start_node], 0, None)
+
+    # Queue prioritária para A* (min-heap)
+    # Queue prioritária tuplos: (f_score, current_path_cost, current_node, path, current_vehicle, end_nodes_ttl, fuel_used)
+    open_set = []
+    heappush(open_set, (0, 0, start_node, [start_node], None, 
+                        [(end_node, graph.get_node(end_node).get_ttl()) for end_node in end_nodes], 0))
+
+    # Guardar os melhores custos de rota para cada nodo
+    g_score = {start_node: 0}
+    visited = set()
+
+    while open_set:
+        _, current_cost, current_node, current_path, vehicle, current_end_nodes_ttl, current_path_fuel = heappop(open_set)
+
+        # Se o nodo atual for um nodo objetivo
+        if any(current_node == end_zone for end_zone, _ in current_end_nodes_ttl):
+            custo_total = graph.calcula_custo(current_path)
+            return (current_path, custo_total, vehicle)
+
+        notify("debug", f"A analisar os vizinhos de {current_node}")
+
+        for (adjacente, edge_data) in graph.graph[current_node]:
+            travel_time, fuel_cost, _, vehicles = edge_data
+
+            if adjacente in visited:
+                continue
+            notify("debug", f"Testando rota {current_path+[adjacente]}")
+
+            # Calcular o potencial custo de rota para o nodo adjacente
+            tentative_g_score = current_cost + graph.calcula_custo(current_path + [adjacente])
+
+            # Calcular a heurística do nodo adjacente e completar a função custo: custo rota + heuristica 
+            heuristic = graph.get_heuristic(adjacente)
+            f_score = tentative_g_score + heuristic
+
+            # Se o valor do custo da rota do nodo for melhor doq que o seu último valor, atualizar
+            if tentative_g_score < g_score.get(adjacente, float('inf')):
+                g_score[adjacente] = tentative_g_score
+
+            # Encontrar um veículo que possa atravessar esta aresta com esta carga e que seja rápido mas também adequado à carga que irá transportar
+            vehicle_list = [v.get_vehicle() for v in vehicles]
+            current_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
+
+            # Validar combustível
+            if current_vehicle is not None:
+                if vehicle is not None and current_vehicle != vehicle:
+                    notify("warning", f"Troca de veículo de {vehicle.get_name()} para {current_vehicle.get_name()} em {adjacente}")
+                # Se o veículo tiver autonomia para percorrer este potencial path
+                if current_vehicle.get_range() < current_path_fuel + fuel_cost:
+                    notify("warning", f"Combustível seria insuficiente por esta rota para chegar a {adjacente}, reabasteça {abs(current_vehicle.get_range() - (current_path_fuel + fuel_cost))}")
+                    continue
+                notify("debug", f"Veículo {current_vehicle.get_name()} ficaria com {current_vehicle.get_range() - (current_path_fuel + fuel_cost)} de combustível ao chegar a {adjacente}")
+
+            # Se não houver veículo adequado, continuar
+            if current_vehicle is None:
+                notify("debug", f"Não há nenhum veículo capaz de realizar esta rota, {current_path+[adjacente]}, com esta carga: {peso}")
+                continue
+
+            # Atualizar TTL para end zones
+            new_end_nodes_ttl = []
+            for end_zone, ttl in current_end_nodes_ttl:
+                new_ttl = ttl - travel_time
+                if new_ttl > 0:
+                    new_end_nodes_ttl.append((end_zone, new_ttl))
+                    notify("debug", f"Zona {end_zone} ficaria com TTL {new_ttl}")
+                else:
+                    notify("warning", f"Zona {end_zone} removida pois excederia TTL para esta rota")
+
+            # Se o nodo adjacente é um nodo objetivo
+            if any(adjacente == end_zone for end_zone, _ in new_end_nodes_ttl):
+                custo_total = graph.calcula_custo(current_path + [adjacente])
+                return (current_path + [adjacente], custo_total, current_vehicle)
+
+            # Inserir o novo estado na queue
+            heappush(open_set, (f_score, tentative_g_score, adjacente, current_path + [adjacente], 
+                                current_vehicle, new_end_nodes_ttl, current_path_fuel + fuel_cost))
+
+        visited.add(current_node)
+
+    return None  # No path found
+
 
 def Greedy(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0): 
     open_list = set([start_node])

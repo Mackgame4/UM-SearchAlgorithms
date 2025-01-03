@@ -21,7 +21,7 @@
 #let autores = (
     "A104365 - Fábio Magalhães",
     "A104185 - Filipe Fernandes",
-    "AXXXXXX - Nome",
+    "A104540 - Pedro Gomes",
     "AXXXXXX - Nome",
     "AXXXXXX - Nome"
 )

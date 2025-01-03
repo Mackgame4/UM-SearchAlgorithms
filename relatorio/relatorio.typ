@@ -15,7 +15,9 @@ A utilização de estratégias de procura informada e não informada possibilita
 
 Este estudo foca-se, portanto, na formulação e implementação de algoritmos que possam responder a tais desafios, garantindo uma resposta eficaz em contextos de emergência.
 
+
 #pagebreak()
+
 
 = Descrição do problema
 #v(15pt)
@@ -29,6 +31,7 @@ Para maximizar a efetividade da distribuição, é necessário escolher o veícu
 
 O objetivo central é garantir que o maior número de pessoas seja assistido dentro de um tempo limitado, evitando desperdícios de tempo, alimentos e combustível. Enfrentando obstáculos fixos e dinâmicos, como acessos bloqueados e condições climáticas extremas.
 
+
 = Formulação do problema
 #v(15pt)
 - *Estado Inicial:* Alimentos e medicamentos disponíveis e veiculos prontos para distribuição.
@@ -38,18 +41,23 @@ O objetivo central é garantir que o maior número de pessoas seja assistido den
 
 Essa formulação permite aplicar e avaliar algoritmos de procura, comparando a eficiência das soluções.
 
+
 = Metodologia
 #v(15pt)
 <\<Descrição de todas as tarefas realizadas, bem como de todas as decisões tomadas pelo grupo de
 trabalho>>
 
+
 #pagebreak()
+
 
 = Conclusão e Resultados
 #v(15pt)
 <\<Sumário e discussão dos resultados obtidos>>
 
+
 #pagebreak()
+
 
 = Referências
 #v(15pt)
