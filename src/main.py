@@ -6,7 +6,7 @@ from example_graph import FixedGraph, DynamicGraph
 from classes.graph import Graph
 from utils.notify import notify
 from utils.menu import Menu
-from classes.algorithms import BFS, DFS, Greedy, AStar, UniformCost, HillClimbing, SimulatedAnnealing, GeneticAlgorithm
+from classes.algorithms import BFS, DFS, Greedy, AStar, UniformCost, HillClimb
 from classes.vehicle import VEHICLE_TYPES
 
 def run_main():
@@ -38,9 +38,7 @@ def run_menu(args: list):
     graph_menu.add_entry("[Resolver] com A*", lambda: resolve(graph, AStar))
     graph_menu.add_entry("[Resolver] com Greedy", lambda: resolve(graph, Greedy))
     graph_menu.add_entry("[Resolver] com Uniform Cost", lambda: resolve(graph, UniformCost))
-    graph_menu.add_entry("[Resolver] com Hill Climbing", lambda: resolve(graph, HillClimbing))
-    graph_menu.add_entry("[Resolver] com Simulated Annealing", lambda: resolve(graph, SimulatedAnnealing))
-    graph_menu.add_entry("[Resolver] com Genetic Algorithm", lambda: resolve(graph, GeneticAlgorithm))
+    graph_menu.add_entry("[Resolver] com Hill Climbing", lambda: resolve(graph, HillClimb))
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 

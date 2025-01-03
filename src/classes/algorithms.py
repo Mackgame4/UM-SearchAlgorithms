@@ -405,11 +405,62 @@ def UniformCost(start_node: str, end_nodes: list[str], graph: Graph, peso: int =
                 end_nodes.remove(end_node_name)
     return None  # Return None if no path is found
 
-def HillClimbing():
-    pass
+def HillClimb(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0):
+    """
+    Hill Climbing algorithm for pathfinding.
+    :param start_node: Initial node.
+    :param end_nodes: List of goal nodes.
+    :param graph: Graph.
+    :param peso: Weight to be transported.
+    :return: Tuple (path, total_cost, vehicle) if a solution is found, otherwise None.
+    """
+    # Initial setup
+    current_node = start_node
+    path = [current_node]
+    visited = set()
+    vehicle = copy.deepcopy(get_start_capable_vehicle(peso))
 
-def SimulatedAnnealing():
-    pass
+    if vehicle is None:
+        return None
 
-def GeneticAlgorithm():
-    pass
+    visited.add(current_node)
+
+    while True:
+        # If the current node is one of the goal nodes
+        if current_node in end_nodes:
+            total_cost = graph.calcula_custo(path)
+            return (path, total_cost, vehicle)
+
+        # Find the best neighbor based on heuristic values
+        neighbors = graph.get_neighbours(current_node)
+        best_neighbor = None
+        best_heuristic = float("inf")
+
+        for (neighbor, travel_time, fuel_cost, _, vehicleTypes) in neighbors:
+            if neighbor not in visited:
+                heuristic = graph.get_heuristic(neighbor)
+                if heuristic < best_heuristic:
+                    # Check vehicle suitability
+                    vehicle_list = [v.get_vehicle() for v in vehicleTypes]
+                    new_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
+
+                    if new_vehicle and new_vehicle.get_range() >= fuel_cost:
+                        best_heuristic = heuristic
+                        best_neighbor = (neighbor, travel_time, fuel_cost, new_vehicle)
+
+        # If no valid neighbor is found, terminate
+        if best_neighbor is None:
+            notify("info", "Nenhum melhor vizinho encontrado. Terminando o algoritmo.")
+            return None
+
+        # Move to the best neighbor
+        next_node, travel_time, fuel_cost, new_vehicle = best_neighbor
+
+        if new_vehicle != vehicle:
+            notify("warning", f"Troca de veículo de {vehicle.get_name()} para {new_vehicle.get_name()} em {next_node}")
+            vehicle = new_vehicle
+
+        vehicle.set_range(vehicle.get_range() - fuel_cost)
+        visited.add(next_node)
+        path.append(next_node)
+        current_node = next_node
