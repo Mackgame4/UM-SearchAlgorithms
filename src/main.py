@@ -2,7 +2,7 @@ import sys
 from colorama import Fore
 import copy
 
-from example_graph import FixedGraph, DynamicGraph
+from example_graph import FixedGraph, RandomGraph, DynamicGraph
 from classes.graph import Graph
 from utils.notify import notify
 from utils.menu import Menu
@@ -12,8 +12,8 @@ from classes.vehicle import VEHICLE_TYPES
 def run_main():
     main_menu = Menu("Selecione o tipo de grafo que deseja utilizar:")
     main_menu.add_entry("Fixed Graph", lambda: (run_menu(["", "test"]), main_menu.close()))
+    main_menu.add_entry("Random Graph", lambda: (run_menu(["", "run_random"]), main_menu.close()))
     main_menu.add_entry("Dynamic Graph", lambda: (run_menu(["", "run_dynamic"]), main_menu.close()))
-    #main_menu.add_entry("IRL Graph", lambda: (run_menu(["", "run_irl"]), main_menu.close()))
     main_menu.default_exit(exit_program)
     main_menu.show()
 
@@ -22,8 +22,11 @@ def run_menu(args: list):
     if args[1] == "test": # "make args='test'"
         notify("info", "Running with fixed graph")
         graph = FixedGraph()
-    elif args[1] == "run": # "make args='run'"
-        notify("info", "Running with dynamic graph") # TODO: Implement the IRLGraph class (a graph where the zones and streats are fixed but travel times and meteorologic conditions change)
+    elif args[1] == "run_random": # "make args='run_random'"
+        notify("info", "Running with random graph")
+        graph = RandomGraph()
+    elif args[1] == "run_dynamic": # "make args='run_dynamic'"
+        notify("info", "Running with dynamic graph")
         graph = DynamicGraph()
     else:
         notify("warning", "Invalid arguments. Usage: python main.py [test|run_dynamic|run_irl]")
@@ -31,14 +34,19 @@ def run_menu(args: list):
     graph_menu.add_entry("[Imprimir] Grafo", lambda: print(graph.graph))
     graph_menu.add_entry("[Imprimir] Nodos", lambda: graph.print_nodes())
     graph_menu.add_entry("[Imprimir] Arestas", lambda: graph.print_edges())
-    graph_menu.add_entry("[Desenhar] Grafo", lambda: graph.draw_graph())
-    graph_menu.add_entry("[Desenhar] Mapa", lambda: graph.draw_map())
+    graph_menu.add_entry("[Desenhar] Grafo", lambda: graph.draw_graph(), False)
+    graph_menu.add_entry("[Desenhar] Mapa", lambda: graph.draw_map(), False)
     graph_menu.add_entry("[Resolver] com DFS", lambda: resolve(graph, DFS))
     graph_menu.add_entry("[Resolver] com BFS", lambda: resolve(graph, BFS))
     graph_menu.add_entry("[Resolver] com A*", lambda: resolve(graph, AStar))
     graph_menu.add_entry("[Resolver] com Greedy", lambda: resolve(graph, Greedy))
     graph_menu.add_entry("[Resolver] com Uniform Cost", lambda: resolve(graph, UniformCost))
     graph_menu.add_entry("[Resolver] com Hill Climbing", lambda: resolve(graph, HillClimb))
+    if args[1] == "run_dynamic":
+        def simulate_graph():
+            graph.simulate()
+            notify("info", "Condições dinamicas alteradas.")
+        graph_menu.add_entry("[Simular] Alterações Metereológicas", lambda: simulate_graph(), False)
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 

@@ -20,8 +20,11 @@ dev:
 test:
 	@make dev ARGS="test"
 
-run:
-	@make dev ARGS="run"
+run-random:
+	@make dev ARGS="run_random"
+
+run-dynamic:
+	@make dev ARGS="run_dynamic"
 
 clean:
 	@rm -rf __pycache__ src/__pycache__ src/*.pyc src/*/__pycache__ src/*/*.pyc

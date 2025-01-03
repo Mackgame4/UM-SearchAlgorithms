@@ -22,13 +22,13 @@ class Menu:
         self.exit_func = lambda: None
         self.closed = False
 
-    def add_entry(self, text: str, func: Callable):
+    def add_entry(self, text: str, func: Callable, clear_screen: bool=True) -> None:
         """
         Adds an entry to the menu.
         :param text: Display text for the menu option.
         :param func: Function to execute when the option is selected.
         """
-        self.entries.append((text, func))
+        self.entries.append((text, func, clear_screen))
 
     def default_exit(self, func: Callable):
         """
@@ -58,7 +58,7 @@ class Menu:
         """
         while not self.closed:
             print(MAIN_COLOR + self.title + Fore.RESET)
-            for i, (text, _) in enumerate(self.entries, start=1):
+            for i, (text, _, _) in enumerate(self.entries, start=1):
                 print(MAIN_COLOR + f"{i} - " + Fore.RESET + text)
             if self.exit:
                 print(MAIN_COLOR + "0 - " + Fore.RESET + EXIT_TEXT)
@@ -78,8 +78,9 @@ class Menu:
                         self.press_key()  # Wait for the user to acknowledge the error
                         clear()
                     else:
-                        self.press_key()  # Wait for the user to press any key after the function is done
-                        clear()
+                        if self.entries[choice - 1][2]:
+                            self.press_key()  # Wait for the user to press any key after the function is done
+                            clear()
                 else:
                     clear()
                     notify("error", INVALID_OPTION)
