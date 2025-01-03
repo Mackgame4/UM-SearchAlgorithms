@@ -14,7 +14,7 @@ $ make
 ```
 or if you want to run a specific test:
 ```shell
-$ make args="[test|run_dynamic|run_irl]"
+$ make [test|run-random|run-dynamic]
 ```
 
 ## Report
@@ -22,8 +22,4 @@ The pre-compiled version of the report can be found in the `relatorio` folder (`
 ```shell
 $ make relatorio
 ```
-###### Attention: You need to have [Typst](https://typst.app/) installed to compile
-
-### Developement Team
-A104365 - Fábio Magalhães
-A104267 - André Pinto
+###### Attention: You need to have [Typst](https://typst.app/) installed to compile the report.

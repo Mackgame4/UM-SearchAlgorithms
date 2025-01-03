@@ -22,6 +22,6 @@
     "A104365 - Fábio Magalhães",
     "A104185 - Filipe Fernandes",
     "A104540 - Pedro Gomes",
-    "AXXXXXX - Nome",
-    "AXXXXXX - Nome"
+    "A104267 - André Pinto",
+    "A104615 - David Costa"
 )
