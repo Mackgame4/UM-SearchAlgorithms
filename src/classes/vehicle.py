@@ -78,6 +78,21 @@ def get_fastest_capable_vehicle(vehicleList: list[Vehicle], capacity: int) -> Ve
     )
     return best_vehicle
 
+def get_start_capable_vehicle(capacity: int) -> Vehicle:
+    """
+    Get the vehicle that can carry the given capacity and has the highest range.
+    :param capacity: The required capacity the vehicle must support.
+    :return: The most suitable vehicle based on range and affordability.
+    """
+    vehicleList = list(VEHICLE_TYPES.values())
+    suitable_vehicles = [vehicle for vehicle in vehicleList if vehicle.get_capacity() >= capacity]
+    # If there are no suitable vehicles, return None
+    if not suitable_vehicles:
+        return None
+    # Find the vehicle with the highest range
+    best_vehicle = max(suitable_vehicles, key=lambda v: v.get_range())
+    return best_vehicle
+
 class VehicleType:
     def __init__(self, type: int=0):
         """

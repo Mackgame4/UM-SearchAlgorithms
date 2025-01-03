@@ -6,7 +6,7 @@ from example_graph import FixedGraph, DynamicGraph
 from classes.graph import Graph
 from utils.notify import notify
 from utils.menu import Menu
-from classes.algorithms import BFS, DFS, Greedy
+from classes.algorithms import BFS, DFS, Greedy, AStar, UniformCost, HillClimbing, SimulatedAnnealing, GeneticAlgorithm
 from classes.vehicle import VEHICLE_TYPES
 
 def run_main():
@@ -35,12 +35,12 @@ def run_menu(args: list):
     graph_menu.add_entry("[Desenhar] Mapa", lambda: graph.draw_map())
     graph_menu.add_entry("[Resolver] com DFS", lambda: resolve(graph, DFS))
     graph_menu.add_entry("[Resolver] com BFS", lambda: resolve(graph, BFS))
-    graph_menu.add_entry("[Resolver] com A*", lambda: print("Resolver com A*"))
+    graph_menu.add_entry("[Resolver] com A*", lambda: resolve(graph, AStar))
     graph_menu.add_entry("[Resolver] com Greedy", lambda: resolve(graph, Greedy))
-    graph_menu.add_entry("[Resolver] com Uniform Cost", lambda: print("Resolver com Uniform Cost"))
-    graph_menu.add_entry("[Resolver] com Hill Climbing", lambda: print("Resolver com Hill Climbing"))
-    graph_menu.add_entry("[Resolver] com Simulated Annealing", lambda: print("Resolver com Simulated Annealing"))
-    graph_menu.add_entry("[Resolver] com Genetic Algorithm", lambda: print("Resolver com Genetic Algorithm"))
+    graph_menu.add_entry("[Resolver] com Uniform Cost", lambda: resolve(graph, UniformCost))
+    graph_menu.add_entry("[Resolver] com Hill Climbing", lambda: resolve(graph, HillClimbing))
+    graph_menu.add_entry("[Resolver] com Simulated Annealing", lambda: resolve(graph, SimulatedAnnealing))
+    graph_menu.add_entry("[Resolver] com Genetic Algorithm", lambda: resolve(graph, GeneticAlgorithm))
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 
