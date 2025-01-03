@@ -57,7 +57,7 @@ def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, vehicle_lis
             resultado = procura_DFS(adjacente, end_nodes, graph, vehicle_list, peso, path.copy(), visited.copy(), current_vehicle)
             if resultado is not None:
                 return resultado
-    # Backtracking não é utilizado no algoritmo DFS, mas será util para outros algoritmos
+            # Backtracking não é utilizado no algoritmo DFS, mas será util para outros algoritmos
             #else:
                 # Se não encontrámos nenhuma end zone e os recursos acabaram então os últimos gastos ficam sem efeito e vamos verificar os restantes caminhos
                 #current_vehicle.set_range(current_vehicle.get_range() + fuel_cost) # Restaurar o valor do combustível nesta zona
