@@ -6,7 +6,7 @@ from example_graph import FixedGraph, DynamicGraph
 from classes.graph import Graph
 from utils.notify import notify
 from utils.menu import Menu
-from classes.algorithms import procura_BFS, procura_DFS, procura_Greedy
+from classes.algorithms import BFS, DFS, Greedy
 from classes.vehicle import VEHICLE_TYPES
 
 def run_main():
@@ -33,15 +33,14 @@ def run_menu(args: list):
     graph_menu.add_entry("[Imprimir] Arestas", lambda: graph.print_edges())
     graph_menu.add_entry("[Desenhar] Grafo", lambda: graph.draw_graph())
     graph_menu.add_entry("[Desenhar] Mapa", lambda: graph.draw_map())
-    graph_menu.add_entry("[Resolver] com DFS", lambda: resolve_with_dfs(graph))
-    graph_menu.add_entry("[Resolver] com BFS", lambda: resolve_with_bfs(graph))
+    graph_menu.add_entry("[Resolver] com DFS", lambda: resolve(graph, DFS))
+    graph_menu.add_entry("[Resolver] com BFS", lambda: resolve(graph, BFS))
     graph_menu.add_entry("[Resolver] com A*", lambda: print("Resolver com A*"))
-    graph_menu.add_entry("[Resolver] com Greedy", lambda: resolve_with_greedy(graph))
+    graph_menu.add_entry("[Resolver] com Greedy", lambda: resolve(graph, Greedy))
     graph_menu.add_entry("[Resolver] com Uniform Cost", lambda: print("Resolver com Uniform Cost"))
     graph_menu.add_entry("[Resolver] com Hill Climbing", lambda: print("Resolver com Hill Climbing"))
     graph_menu.add_entry("[Resolver] com Simulated Annealing", lambda: print("Resolver com Simulated Annealing"))
     graph_menu.add_entry("[Resolver] com Genetic Algorithm", lambda: print("Resolver com Genetic Algorithm"))
-    graph_menu.add_entry("[Resolver] com Estratégia Desenvolvida", lambda: print("Resolver com Estratégia Desenvolvida pelo grupo"))
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 
@@ -65,15 +64,6 @@ def resolve(graph: Graph, algorithm):
         notify("success", f"Resultado: {res[0]} com custo total de {int(res[1])} e veículo {res[2]}")
     else:
         notify("error", "Não foi possível chegar às zonas afetadas dadas as características dos caminhos existentes e os veículos à disposição.")
-
-def resolve_with_dfs(graph: Graph):
-    resolve(graph, procura_DFS)
-
-def resolve_with_bfs(graph: Graph):
-    resolve(graph, procura_BFS)
-
-def resolve_with_greedy(graph: Graph):
-    resolve(graph, procura_Greedy)
 
 def main():
     args = sys.argv

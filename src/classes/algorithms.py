@@ -4,7 +4,7 @@ from classes.vehicle import Vehicle, get_fastest_capable_vehicle
 import copy
 from collections import deque
 
-def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0, path: list = None, visited: set = None, vehicle: Vehicle = None):
+def DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0, path: list = None, visited: set = None, vehicle: Vehicle = None):
     """
     Busca em profundidade modificada (DFS) com TTL e troca de veículo baseado no peso.
     :param start_node: Nodo inicial.
@@ -58,7 +58,7 @@ def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int =
                     notify("warning", f"Zona {end_node_name} removida por TTL")
                     end_nodes.remove(end_node_name) # Remove from the copy, not from the graph
             # Recursion with the updated vehicle and fresh path/visited
-            resultado = procura_DFS(adjacente, end_nodes, graph, peso, path.copy(), visited.copy(), current_vehicle)
+            resultado = DFS(adjacente, end_nodes, graph, peso, path.copy(), visited.copy(), current_vehicle)
             if resultado is not None:
                 return resultado
             # Backtracking não é utilizado no algoritmo DFS, mas será util para outros algoritmos
@@ -74,7 +74,7 @@ def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int =
     path.pop()
     return None
 
-def procura_BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0):
+def BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0):
     """
     Busca em largura modificada (BFS) com TTL e troca de veículo baseado no peso.
     :param start_node: Nodo inicial.
@@ -154,10 +154,10 @@ def procura_BFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int=0
 
     return None  # Se não encontrar nenhum caminho
 
-def procura_UniformCost():
+def AStar():
     pass
 
-def procura_Greedy(start_node: str, end_nodes: list[str], graph: Graph, vehicle_list: dict, peso: int=0): 
+def Greedy(start_node: str, end_nodes: list[str], graph: Graph, vehicle_list: dict, peso: int=0): 
     open_list = set([start_node])
     closed_list = set([])
     parents = {}
@@ -197,3 +197,15 @@ def procura_Greedy(start_node: str, end_nodes: list[str], graph: Graph, vehicle_
         open_list.remove(n)
         closed_list.add(n)
     return None
+
+def UniformCost():
+    pass
+
+def HillClimbing():
+    pass
+
+def SimulatedAnnealing():
+    pass
+
+def GeneticAlgorithm():
+    pass
