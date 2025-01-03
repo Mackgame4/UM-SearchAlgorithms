@@ -3,6 +3,7 @@ from utils.notify import notify
 from classes.vehicle import Vehicle, VehicleType, get_fastest_capable_vehicle, get_start_capable_vehicle
 import copy
 from collections import deque
+from queue import Queue
 
 def DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0, path: list = None, visited: set = None, vehicle: Vehicle = None):
     """
@@ -216,8 +217,91 @@ def Greedy(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0):
         new_vehicle.set_range(new_vehicle.get_range() - fuel_cost)
     return None
 
-def UniformCost():
-    pass
+def UniformCost(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0):  
+    """
+    Uniform Cost Search for pathfinding using Queue and deque, prioritizing the least total cost (fuel cost).
+    :param start_node: Nodo inicial.
+    :param end_nodes: Lista de nodos finais.
+    :param graph: Grafo.
+    :param peso: Peso a ser transportado.
+    :return: Tupla (caminho, custo_total, veículo) se encontrar, caso contrário, None.
+    """
+    # Queue for the exploration process
+    open_list = Queue()
+    open_list.put((0, start_node, None))  # (cumulative cost, node, vehicle)
+    
+    # Dictionaries to store the minimum cost to reach each node and the parent node
+    min_cost = {start_node: 0}
+    parents = {start_node: None}
+    vehicles = {start_node: None}  # To track the vehicle used to reach each node
+    
+    old_vehicle = copy.deepcopy(get_start_capable_vehicle(peso))  # Initialize the starting vehicle
+
+    print(old_vehicle)
+    if old_vehicle is None:
+        return None # if no vehicle can carry the load at the start, we will assume the load is impossible for the entire path
+    
+    while not open_list.empty():
+        current_cost, current_node, vehicle = open_list.get()  # Get the node with lowest cumulative cost
+        
+        # If we reached one of the end nodes, reconstruct the path
+        if current_node in end_nodes:
+            path = []
+            node = current_node
+            while node is not None:
+                path.append(node) # TODO: fix this, only add if the vehicle going there is not None and other rules (also check it for other ones)
+                node = parents[node]
+            path.reverse()
+            total_cost = current_cost
+            return (path, total_cost, vehicle)
+        
+        # Process each adjacent node
+        for (adjacente, edge_data) in graph.graph[current_node]:
+            travel_time, fuel_cost, _, vehicleTypes = edge_data
+            new_cost = current_cost + fuel_cost  # Total cost to reach the adjacent node
+            
+            # Check if we found a cheaper way to reach the adjacent node
+            if adjacente not in min_cost or new_cost < min_cost[adjacente]:
+                min_cost[adjacente] = new_cost
+                parents[adjacente] = current_node
+                
+                # Find the most appropriate vehicle for this edge
+                vehicle_list = [v.get_vehicle() for v in vehicleTypes]
+                new_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
+                print(new_vehicle)
+                print(adjacente)
+                if new_vehicle is not None:
+                    print(new_vehicle.get_range())
+                
+                if new_vehicle is None:
+                    continue  # If no vehicle can carry the load, skip
+                
+                # Check if the vehicle has enough fuel
+                if new_vehicle.get_range() < fuel_cost:
+                    notify("warning", f"Combustível insuficiente para viajar de {current_node} para {adjacente}, reabasteça!")
+                    continue  # Skip this path if fuel is insufficient
+                
+                # Deduct the fuel for this journey
+                new_vehicle.set_range(new_vehicle.get_range() - fuel_cost)
+                
+                # Notify if the vehicle changed
+                if new_vehicle != old_vehicle and new_vehicle is not None:
+                    if old_vehicle is not None:
+                        notify("warning", f"Troca de veículo de {old_vehicle.get_name()} para {new_vehicle.get_name()} em {adjacente}")
+                    old_vehicle = new_vehicle
+
+                # Add to the open list
+                open_list.put((new_cost, adjacente, new_vehicle))
+                vehicles[adjacente] = new_vehicle
+        
+        # Update TTL for the end zones at each step
+        for end_node_name in end_nodes[:]:
+            end_zone = graph.get_node(end_node_name)
+            end_zone.set_ttl(end_zone.get_ttl() - travel_time)
+            if end_zone.get_ttl() <= 0:
+                notify("warning", f"Zona {end_node_name} removida por TTL")
+                end_nodes.remove(end_node_name)
+    return None  # Return None if no path is found
 
 def HillClimbing():
     pass

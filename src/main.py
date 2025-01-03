@@ -59,6 +59,7 @@ def resolve(graph: Graph, algorithm):
     start_node_copy = copy.deepcopy(start_node)
     end_nodes_copy = copy.deepcopy(end_nodes)
     graph_copy = copy.deepcopy(graph)
+    #vehicles_copy = copy.deepcopy(VEHICLE_TYPES) # if we wanted the change of vehicles to keep the fuel level of that vehicle we would need to deepcopy the vehicles and pass them and do: path_vehicles = [v.get_vehicle() for v in vehicleTypes]; vehicle_list = [vehicles_copy for vehicles_copy in path_vehicles]; current_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
     res = algorithm(start_node_copy, end_nodes_copy, graph_copy, carga)
     if res is not None:
         notify("success", f"Resultado: {res[0]} com custo total de {int(res[1])} e veículo {res[2]}")
