@@ -4,7 +4,7 @@ from classes.vehicle import Vehicle, get_fastest_capable_vehicle
 import copy
 from collections import deque
 
-def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, vehicle_list: dict, peso: int = 0, path: list = None, visited: set = None, vehicle: Vehicle = None):
+def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, peso: int = 0, path: list = None, visited: set = None, vehicle: Vehicle = None):
     """
     Busca em profundidade modificada (DFS) com TTL e troca de veículo baseado no peso.
     :param start_node: Nodo inicial.
@@ -30,14 +30,18 @@ def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, vehicle_lis
         custo_total = graph.calcula_custo(path)
         return (path, custo_total, vehicle)
     for (adjacente, edge_data) in graph.graph[start_node]:
-        travel_time, fuel_cost, _, _ = edge_data
+        travel_time, fuel_cost, _, vehicleTypes = edge_data
         # Check if the adjacent node hasn't been visited
         if adjacente not in visited:
             notify("debug", f"Visitando {adjacente}")
             # Find an appropriate vehicle that can carry the load on this edge, which has higher speed and can still carry the weight
+            vehicle_list = [v.get_vehicle() for v in vehicleTypes]
             current_vehicle = get_fastest_capable_vehicle(vehicle_list, peso)
             # Update vehicle fuel
             if current_vehicle is not None:
+                # Notify if vehicle has changed
+                if vehicle is not None and current_vehicle != vehicle:
+                    notify("warning", f"Troca de veículo de {vehicle.get_name()} para {current_vehicle.get_name()}")
                 if current_vehicle.get_range() < fuel_cost:
                     notify("warning", f"Combustível seria insuficiente para chegar a {adjacente}, reabasteça {abs(current_vehicle.get_range()-fuel_cost)} de combustível")
                     continue
@@ -54,7 +58,7 @@ def procura_DFS(start_node: str, end_nodes: list[str], graph: Graph, vehicle_lis
                     notify("warning", f"Zona {end_node_name} removida por TTL")
                     end_nodes.remove(end_node_name) # Remove from the copy, not from the graph
             # Recursion with the updated vehicle and fresh path/visited
-            resultado = procura_DFS(adjacente, end_nodes, graph, vehicle_list, peso, path.copy(), visited.copy(), current_vehicle)
+            resultado = procura_DFS(adjacente, end_nodes, graph, peso, path.copy(), visited.copy(), current_vehicle)
             if resultado is not None:
                 return resultado
             # Backtracking não é utilizado no algoritmo DFS, mas será util para outros algoritmos

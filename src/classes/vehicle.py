@@ -58,14 +58,13 @@ VEHICLE_TYPES: dict[int, Vehicle] = {
     4: Vehicle("Drone", 100, 1000, 300)
 }
 
-def get_fastest_capable_vehicle(vehicle_list: dict[int, Vehicle], capacity: int) -> Vehicle:
+def get_fastest_capable_vehicle(vehicleList: list[Vehicle], capacity: int) -> Vehicle:
     """
     Get the fastest vehicle that can carry the given capacity, 
     prioritizing vehicles with a capacity closer to the required load.
     :param capacity: The required capacity the vehicle must support.
     :return: The most suitable vehicle based on speed and affordability.
     """
-    vehicleList = list(vehicle_list.values())
     # Sort vehicles by speed (descending), and if speeds are equal, by capacity (ascending)
     vehicleList.sort(key=lambda x: (x.get_speed(), -x.get_capacity()), reverse=True)
     suitable_vehicles = [vehicle for vehicle in vehicleList if vehicle.get_capacity() >= capacity]

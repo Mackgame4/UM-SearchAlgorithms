@@ -60,8 +60,7 @@ def resolve(graph: Graph, algorithm):
     start_node_copy = copy.deepcopy(start_node)
     end_nodes_copy = copy.deepcopy(end_nodes)
     graph_copy = copy.deepcopy(graph)
-    vehicles_copy = copy.deepcopy(VEHICLE_TYPES)
-    res = algorithm(start_node_copy, end_nodes_copy, graph_copy, vehicles_copy, carga)
+    res = algorithm(start_node_copy, end_nodes_copy, graph_copy, carga)
     if res is not None:
         notify("success", f"Resultado: {res[0]} com custo total de {int(res[1])} e veículo {res[2]}")
     else:
