@@ -89,6 +89,23 @@ class Graph:
         if not self.directed:
             self.graph[node2].append((node1, (travel_time, fuel_cost, good_conditions, vehicles))) # Add edge in both directions (undirected graph)
 
+    def has_edge(self, zone1: Zone, zone2: Zone) -> bool:
+        """
+        Check if there is an edge between two zones.
+        :param zone1: Zone 1.
+        :param zone2: Zone 2.
+        :return: True if there is an edge between the two zones, False otherwise.
+        """
+        if not isinstance(zone1, Zone) or not isinstance(zone2, Zone):
+            raise ValueError("Both arguments must be of type Zone.")
+        node1 = zone1.get_name()
+        node2 = zone2.get_name()
+        if node1 in self.graph:
+            for (adjacente, _) in self.graph[node1]:
+                if adjacente == node2:
+                    return True
+        return False
+
     def print_nodes(self):
         for node in self.nodes:
             print("Zone:", node.get_name(), node.get_population(), node.get_severity(), node.get_ttl(), node.is_camp())
