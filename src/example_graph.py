@@ -27,22 +27,22 @@ class FixedGraph(Graph): # Inherit from Graph
             6: Zone("Malawi", 700, 2, 1000, False) # Most affected zone
         }
         self.add_edge(self.zones[0], self.zones[1], 100, 10, True, {VehicleType(0), VehicleType(1), VehicleType(2)})
-        self.add_edge(self.zones[0], self.zones[2], 70, 8, True, {VehicleType(2), VehicleType(3), VehicleType(0)})
-        self.add_edge(self.zones[0], self.zones[3], 55, 15, True, {VehicleType(0), VehicleType(3), VehicleType(4)})
-        self.add_edge(self.zones[0], self.zones[4], 110, 12, True, {VehicleType(1), VehicleType(2), VehicleType(3)})
-        self.add_edge(self.zones[4], self.zones[2], 40, 9, True, {VehicleType(0), VehicleType(1), VehicleType(2)})
-        self.add_edge(self.zones[4], self.zones[5], 190, 7, True, {VehicleType(2), VehicleType(3), VehicleType(4)})
-        self.add_edge(self.zones[4], self.zones[3], 130, 10, True, {VehicleType(0), VehicleType(1), VehicleType(3)})
+        self.add_edge(self.zones[0], self.zones[2], 70, 18, True, {VehicleType(2), VehicleType(3), VehicleType(0)})
+        self.add_edge(self.zones[0], self.zones[3], 55, 25, True, {VehicleType(0), VehicleType(3), VehicleType(4)})
+        self.add_edge(self.zones[0], self.zones[4], 110, 22, True, {VehicleType(1), VehicleType(2), VehicleType(3)})
+        self.add_edge(self.zones[4], self.zones[2], 40, 90, True, {VehicleType(0), VehicleType(1), VehicleType(2)})
+        self.add_edge(self.zones[4], self.zones[5], 190, 27, True, {VehicleType(2), VehicleType(3), VehicleType(4)})
+        self.add_edge(self.zones[4], self.zones[3], 130, 30, True, {VehicleType(0), VehicleType(1), VehicleType(3)})
         self.add_edge(self.zones[1], self.zones[3], 70, 11, False, {VehicleType(2), VehicleType(3), VehicleType(4)})
-        self.add_edge(self.zones[1], self.zones[4], 80, 9, True, {VehicleType(0), VehicleType(1), VehicleType(2)})
-        self.add_edge(self.zones[6], self.zones[4], 90, 8, True, {VehicleType(2), VehicleType(3), VehicleType(4)})
-        self.add_edge(self.zones[6], self.zones[5], 95, 7, True, {VehicleType(0), VehicleType(1), VehicleType(2)})
+        self.add_edge(self.zones[1], self.zones[4], 80, 19, True, {VehicleType(0), VehicleType(1), VehicleType(2)})
+        self.add_edge(self.zones[6], self.zones[4], 90, 28, True, {VehicleType(2), VehicleType(3), VehicleType(4)})
+        self.add_edge(self.zones[6], self.zones[5], 95, 37, True, {VehicleType(0), VehicleType(1), VehicleType(2)})
         self.add_edge(self.zones[6], self.zones[2], 115, 20, False, {VehicleType(2), VehicleType(3), VehicleType(4)})
         for zone in self.zones.values():
             self.add_heuristic(zone.get_name(), self.heuristic_function(zone))
 
 class DynamicGraph(Graph):
-    def __init__(self, continent="Africa", max_edges_per_zone=2, max_affected_zones=2, edge_max_vehicles=4):
+    def __init__(self, continent="Africa", max_edges_per_zone=1, max_affected_zones=2, edge_max_vehicles=4):
         """
         DynamicGraph extends graph and creates a dynamic graph with random zones and edges.
         :param continent: Continent to generate the graph.
@@ -54,10 +54,10 @@ class DynamicGraph(Graph):
         self.max_edges_per_zone = max_edges_per_zone
         self.max_affected_zones = max_affected_zones
         self.zone_severity_limits = (2, 4)
-        self.zone_travel_time_limits = (30, 200)
-        self.zone_fuel_cost_limits = (5, 10)
+        self.zone_travel_time_limits = (30, 180)
+        self.zone_fuel_cost_limits = (35, 70)
         self.zone_good_conditions_weights = [0.85, 0.15]  # 85% chance of good conditions
-        self.zone_ttl_limits = (80, 480)
+        self.zone_ttl_limits = (800, 980)
         self.edge_vehicle_limits = (3, edge_max_vehicles)
         self.example_graph()
 

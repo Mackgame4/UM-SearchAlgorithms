@@ -43,6 +43,7 @@ def run_menu(args: list):
     graph_menu.default_exit(exit_program)
     graph_menu.show()
 
+import copy
 def resolve_with_dfs(graph: Graph):
     #start_node = input(Fore.YELLOW + "Digite o nome da zona inicial: " + Fore.RESET).strip()
     #end_node = input(Fore.YELLOW + "Digite o nome da zona final: " + Fore.RESET).strip()
@@ -55,13 +56,15 @@ def resolve_with_dfs(graph: Graph):
     max_vehicle_cap = max([v.get_capacity() for v in VEHICLE_TYPES.values()])
     if carga > max_vehicle_cap:
         notify("error", f"Carga inválida. A carga máxima suportada é de {max_vehicle_cap} kg.")
-
     notify("debug", f"A resolver com DFS de {start_node} para {end_nodes} com carga de {carga} kg")
     path = []
     visited = set()
-    res = procura_DFS(start_node, end_nodes, graph, path, visited, carga)
+    start_node_copy = copy.deepcopy(start_node) # copy the object to avoid changing the original graph
+    end_nodes_copy = copy.deepcopy(end_nodes)
+    graph_copy = copy.deepcopy(graph)
+    res = procura_DFS(start_node_copy, end_nodes_copy, graph_copy, path, visited, carga)
     if res != None:
-        notify("info", f"Resultado: {res}") # Exemplo usando o grafo fixo: Angola -> Malawi ((['Angola', 'Botswana', 'Namibia', 'Zambia', 'Zimbabwe', 'Malawi'], 7730))
+        notify("info", f"Resultado: {res}")
     else: 
         notify("info", "Não foi possível chegar às zonas afetadas dadas as características dos caminhos existentes e os veículos à disposição.")
 

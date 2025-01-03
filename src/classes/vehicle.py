@@ -20,7 +20,7 @@ class Vehicle:
     
     def __eq__(self, other: "Vehicle"):
         return self.name == other.name
-   
+
     def __hash__(self):
         return hash(self.name)
     
@@ -51,21 +51,33 @@ class Vehicle:
         self.speed = speed
 
 VEHICLE_TYPES: dict[int, Vehicle] = {
-    0: Vehicle("Carro", 300, 400, 120),
-    1: Vehicle("Moto", 100, 200, 80),
-    2: Vehicle("Camião", 1000, 49, 80),
+    0: Vehicle("Carro", 600, 400, 120),
+    1: Vehicle("Moto", 200, 200, 80),
+    2: Vehicle("Camião", 1000, 100, 80),
     3: Vehicle("Helicóptero", 500, 600, 200),
-    4: Vehicle("Drone", 600, 1000, 200)
+    4: Vehicle("Drone", 100, 1000, 300)
 }
 
 def get_fastest_capable_vehicle(capacity: int) -> Vehicle:
-    # get the fastest vehicle that can carry the given capacity
+    """
+    Get the fastest vehicle that can carry the given capacity, 
+    prioritizing vehicles with a capacity closer to the required load.
+    :param capacity: The required capacity the vehicle must support.
+    :return: The most suitable vehicle based on speed and affordability.
+    """
     vehicleList = list(VEHICLE_TYPES.values())
-    vehicleList.sort(key=lambda x: x.get_speed(), reverse=True)
-    for vehicle in vehicleList:
-        if vehicle.get_capacity() >= capacity:
-            return vehicle
-    return None
+    # Sort vehicles by speed (descending), and if speeds are equal, by capacity (ascending)
+    vehicleList.sort(key=lambda x: (x.get_speed(), -x.get_capacity()), reverse=True)
+    suitable_vehicles = [vehicle for vehicle in vehicleList if vehicle.get_capacity() >= capacity]
+    # If there are no suitable vehicles, return None
+    if not suitable_vehicles:
+        return None
+    # Find the vehicle with the closest capacity to the required load
+    best_vehicle = min(
+        suitable_vehicles,
+        key=lambda v: (v.get_capacity() - capacity, -v.get_speed())
+    )
+    return best_vehicle
 
 class VehicleType:
     def __init__(self, type: int=0):
