@@ -1,4 +1,4 @@
-# UM-SearchAlgorithm
+# UM-SearchAlgorithms
 This project was developed for the subject IA (Inteligencia Artificial/_Artificial Intelligence_) from University of Minho - Software Engineering degree.
 
 #### Requirements:
